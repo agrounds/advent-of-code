@@ -1,3 +1,5 @@
 package advent.y2020
 
-const val DATAPATH = "/Users/alex/data/advent-of-code/2020"
+import kotlin.io.path.Path
+
+val DATAPATH = Path("/Users/alex/data/advent-of-code/2020")
