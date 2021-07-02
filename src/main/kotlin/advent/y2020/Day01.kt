@@ -40,7 +40,7 @@ fun findSumSlow(nums: List<Int>, target: Int, n: Int): List<Int>? {
 }
 
 fun main() {
-    val input = (DATAPATH / "day1.txt").useLines { lines ->
+    val input = (DATAPATH / "day01.txt").useLines { lines ->
         lines.map { it.toInt() }.toList()
     }
 

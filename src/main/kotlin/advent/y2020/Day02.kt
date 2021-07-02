@@ -16,7 +16,7 @@ private data class PasswordWithPolicy(val password: String, val requiredChar: Ch
 }
 
 fun main() {
-    val passwords = (DATAPATH / "day2.txt").useLines { lines ->
+    val passwords = (DATAPATH / "day02.txt").useLines { lines ->
         lines.map { line ->
             pattern.matchEntire(line).let { matchResult ->
                 if (matchResult == null) throw RuntimeException("Could not match input $line against pattern $pattern")

@@ -22,7 +22,7 @@ private fun countTrees(grid: List<String>, right: Int, down: Int): Int {
 
 
 fun main() {
-    val grid = (DATAPATH / "day3.txt")
+    val grid = (DATAPATH / "day03.txt")
         .useLines { it.toList() }
         .also {
             println("Part one: ${countTrees(it, 3, 1)}")

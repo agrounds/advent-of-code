@@ -4,7 +4,7 @@ import kotlin.io.path.div
 import kotlin.io.path.useLines
 
 fun main() {
-    val groupedLines: List<List<String>> = (DATAPATH / "day6.txt").useLines { lines ->
+    val groupedLines: List<List<String>> = (DATAPATH / "day06.txt").useLines { lines ->
         mutableListOf<MutableList<String>>(mutableListOf()).apply {
             lines.forEach { line ->
                 if (line.isBlank()) {
