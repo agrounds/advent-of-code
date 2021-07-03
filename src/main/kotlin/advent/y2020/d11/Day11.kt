@@ -1,5 +1,6 @@
-package advent.y2020
+package advent.y2020.d11
 
+import advent.y2020.DATAPATH
 import java.lang.RuntimeException
 import kotlin.io.path.div
 import kotlin.io.path.useLines

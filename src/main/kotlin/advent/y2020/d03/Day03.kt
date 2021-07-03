@@ -1,5 +1,6 @@
-package advent.y2020
+package advent.y2020.d03
 
+import advent.y2020.DATAPATH
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 

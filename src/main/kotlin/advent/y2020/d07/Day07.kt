@@ -1,5 +1,6 @@
-package advent.y2020
+package advent.y2020.d07
 
+import advent.y2020.DATAPATH
 import java.util.ArrayDeque
 import java.util.Queue
 import kotlin.io.path.div
