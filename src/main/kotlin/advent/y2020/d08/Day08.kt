@@ -71,6 +71,7 @@ fun main() {
                 }
                 program[i] = instruction
             }
+            else -> throw RuntimeException("Unhandled op")
         }
     }
 }
