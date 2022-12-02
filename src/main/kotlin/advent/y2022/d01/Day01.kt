@@ -1,5 +1,6 @@
 package advent.y2022.d01
 
+import advent.y2022.DATAPATH
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 

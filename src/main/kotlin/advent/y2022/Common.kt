@@ -1,4 +1,4 @@
-package advent.y2022.d01
+package advent.y2022
 
 import kotlin.io.path.Path
 
