@@ -14,6 +14,7 @@ fun overlappingPair(pair: List<Int>): Boolean =
 
 
 fun main() {
+    // Pairs is a list of lists of ints. Each pair is a list of precisely four ints
     val pairs = (DATAPATH / "day04.txt").useLines { lines ->
         lines.toList().map { line ->
             val (first, second) = line.split(',')
