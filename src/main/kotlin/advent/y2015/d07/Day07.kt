@@ -4,11 +4,12 @@ import advent.y2015.DATAPATH
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
-typealias Signal = Pair<UByte, UByte>
-fun Int.toSignal(): Signal {
-    if (this !in 0..65535) throw RuntimeException("Number is outside valid signal range: $this")
-    return (this / 256).toUByte() to (this % 256).toUByte()
-}
+val MAX_SIGNAL = 0x10000.toUInt()
+
+typealias Signal = UInt
+infix fun Signal.shiftLeft(amount: Int) = shl(amount) % MAX_SIGNAL
+infix fun Signal.shiftRight(amount: Int) = shr(amount)
+fun Signal.not(): Signal = inv() % MAX_SIGNAL
 
 sealed class Wiring
 
@@ -24,7 +25,7 @@ fun parseWiring(line: String): Pair<String, Wiring> {
     val parts = line.split(" ")
     val wiring = when {
         parts[0].toIntOrNull() != null ->
-            ConstWiring(parts[0].toInt().toSignal())
+            ConstWiring(parts[0].toUInt())
         parts[0] == "NOT" ->
             NotWiring(parts[1])
         parts[1] == "AND" ->
@@ -41,8 +42,33 @@ fun parseWiring(line: String): Pair<String, Wiring> {
     return parts.last() to wiring
 }
 
-fun partOne() {
+fun partOne(wiringMap: Map<String, Wiring>, wire: String): Signal {
+    val signals: MutableMap<String, Signal> = mutableMapOf()
 
+    fun resolveWire(wire: String): Signal {
+        if (wire in signals) return signals[wire]!!
+        val resolvedSignal: Signal = when (val wiring = wiringMap[wire]) {
+            is ConstWiring ->
+                wiring.value
+            is DirectWiring ->
+                resolveWire(wiring.source)
+            is AndWiring ->
+                resolveWire(wiring.source1) and resolveWire(wiring.source2)
+            is OrWiring ->
+                resolveWire(wiring.source1) or resolveWire(wiring.source2)
+            is LShiftWiring ->
+                resolveWire(wiring.source) shiftLeft wiring.amount
+            is RShiftWiring ->
+                resolveWire(wiring.source) shiftRight  wiring.amount
+            is NotWiring ->
+                resolveWire(wiring.source).not()
+            null ->
+                throw RuntimeException("Missing signal for wire $wire")
+        }
+        signals[wire] = resolvedSignal
+        return resolvedSignal
+    }
+    return resolveWire(wire)
 }
 
 
@@ -50,4 +76,6 @@ fun main() {
     val wiringMap: Map<String, Wiring> = (DATAPATH / "day07.txt").useLines { lines ->
         lines.toList().associate(::parseWiring)
     }
+    partOne(wiringMap, "a")
+        .also { println("Part one: $it") }
 }
