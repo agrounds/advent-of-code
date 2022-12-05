@@ -6,28 +6,40 @@ import kotlin.io.path.useLines
 
 data class TourPlan(val start: Int, val destinations: Set<Int>)
 
-fun findMinTour(distances: Array<IntArray>): Int {
+fun findExtremeTour(distances: Array<IntArray>, minimize: Boolean = true): Int {
     // store the minimum achievable tour of a subset of our locations
-    val minTours = mutableMapOf<TourPlan, Int>()
+    val extremeTours = mutableMapOf<TourPlan, Int>()
 
-    fun findMinSubtour(tourPlan: TourPlan): Int {
+    fun findExtremeSubtour(tourPlan: TourPlan): Int {
         val (start, destinations) = tourPlan
-        if (tourPlan in minTours) return minTours[tourPlan]!!
+        if (tourPlan in extremeTours) return extremeTours[tourPlan]!!
         // only one possible tour
         if (destinations.size == 1) {
             return distances[start][destinations.first()]
-                .also { minTours[tourPlan] = it }
+                .also { extremeTours[tourPlan] = it }
         }
         // try each possible subtour recursively
-        return destinations.minOf { next ->
-            distances[start][next] + findMinSubtour(TourPlan(next, destinations - next))
+        return if (minimize) {
+            destinations.minOf { next ->
+                distances[start][next] + findExtremeSubtour(TourPlan(next, destinations - next))
+            }
+        } else {
+            destinations.maxOf { next ->
+                distances[start][next] + findExtremeSubtour(TourPlan(next, destinations - next))
+            }
         }.also {
-            minTours[tourPlan] = it
+            extremeTours[tourPlan] = it
         }
     }
 
-    return distances.indices.minOf { start ->
-        findMinSubtour(TourPlan(start, distances.indices.toSet() - start))
+    return if (minimize) {
+        distances.indices.minOf { start ->
+            findExtremeSubtour(TourPlan(start, distances.indices.toSet() - start))
+        }
+    } else {
+        distances.indices.maxOf { start ->
+            findExtremeSubtour(TourPlan(start, distances.indices.toSet() - start))
+        }
     }.also {
         println()
     }
@@ -52,5 +64,8 @@ fun main() {
         distances
     }
 
-    findMinTour(distances).also { println("Part one: $it") }
+    findExtremeTour(distances, minimize = true)
+        .also { println("Part one: $it") }
+    findExtremeTour(distances, minimize = false)
+        .also { println("Part two: $it") }
 }
