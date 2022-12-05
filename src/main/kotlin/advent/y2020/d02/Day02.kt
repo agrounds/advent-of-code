@@ -1,6 +1,6 @@
 package advent.y2020.d02
 
-import advent.y2020.DATAPATH
+import advent.DATAPATH
 import java.lang.RuntimeException
 import kotlin.io.path.div
 import kotlin.io.path.useLines
@@ -17,7 +17,7 @@ private data class PasswordWithPolicy(val password: String, val requiredChar: Ch
 }
 
 fun main() {
-    val passwords = (DATAPATH / "day02.txt").useLines { lines ->
+    val passwords = (DATAPATH / "2020/day02.txt").useLines { lines ->
         lines.map { line ->
             pattern.matchEntire(line).let { matchResult ->
                 if (matchResult == null) throw RuntimeException("Could not match input $line against pattern $pattern")

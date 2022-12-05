@@ -1,6 +1,6 @@
 package advent.y2015.d07
 
-import advent.y2015.DATAPATH
+import advent.DATAPATH
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -80,7 +80,7 @@ fun resolveWireA(wiringMap: Map<String, Wiring>, initialSignals: Map<String, Sig
 
 
 fun main() {
-    val wiringMap: Map<String, Wiring> = (DATAPATH / "day07.txt").useLines { lines ->
+    val wiringMap: Map<String, Wiring> = (DATAPATH / "2015/day07.txt").useLines { lines ->
         lines.toList().associate(::parseWiring)
     }
     resolveWireA(wiringMap, emptyMap())

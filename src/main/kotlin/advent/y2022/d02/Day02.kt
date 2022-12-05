@@ -1,6 +1,6 @@
 package advent.y2022.d02
 
-import advent.y2022.DATAPATH
+import advent.DATAPATH
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -47,7 +47,7 @@ fun scorePartTwo(opponentChoice: String, result: String): Int {
 
 
 fun main() {
-    val rounds: List<Pair<String, String>> = (DATAPATH / "day02.txt").useLines { lines ->
+    val rounds: List<Pair<String, String>> = (DATAPATH / "2022/day02.txt").useLines { lines ->
         lines.toList().map { line ->
             val (a, b) = line.split(" ")
             a to b

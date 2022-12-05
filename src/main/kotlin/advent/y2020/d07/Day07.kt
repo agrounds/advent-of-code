@@ -1,6 +1,6 @@
 package advent.y2020.d07
 
-import advent.y2020.DATAPATH
+import advent.DATAPATH
 import java.util.ArrayDeque
 import java.util.Queue
 import kotlin.io.path.div
@@ -60,7 +60,7 @@ private fun countContainedBags(rulesMap: Map<String, Rule>, target: String): Int
 
 
 fun main() {
-    val rules = (DATAPATH / "day07.txt").useLines { it.toList().map(::parseRule) }
+    val rules = (DATAPATH / "2020/day07.txt").useLines { it.toList().map(::parseRule) }
 
     mutableMapOf<String, MutableList<Rule>>().let { map ->
         rules.forEach { rule ->

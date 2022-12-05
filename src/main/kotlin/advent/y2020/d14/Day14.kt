@@ -1,7 +1,7 @@
 package advent.y2020.d14
 
-import advent.y2020.DATAPATH
-import advent.y2020.pow
+import advent.DATAPATH
+import advent.pow
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -87,7 +87,7 @@ private fun runProgram2(program: List<Instruction>): Long {
 }
 
 fun main() {
-    val program = (DATAPATH / "day14.txt")
+    val program = (DATAPATH / "2020/day14.txt")
         .useLines { it.map(::parseInstruction).toList() }
 
     runProgram1(program)

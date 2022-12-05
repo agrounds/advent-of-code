@@ -1,6 +1,6 @@
 package advent.y2020.d13
 
-import advent.y2020.DATAPATH
+import advent.DATAPATH
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -29,7 +29,7 @@ fun chineseRemainder(input: List<Pair<Int, Int>>): Long {
 fun main() {
     var depart = 0
     var busIdsUnparsed = emptyList<String>()
-    (DATAPATH / "day13.txt").useLines { lines ->
+    (DATAPATH / "2020/day13.txt").useLines { lines ->
         lines.forEachIndexed { i, line ->
             when (i) {
                 0 -> depart = line.toInt()

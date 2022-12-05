@@ -1,6 +1,6 @@
 package advent.y2020.d17
 
-import advent.y2020.DATAPATH
+import advent.DATAPATH
 import java.util.ArrayDeque
 import java.util.Queue
 import kotlin.io.path.div
@@ -96,7 +96,7 @@ private fun State4.next4(): State4 {
 fun main() {
     val initialState = mutableSetOf<Point>()
     val initialState4 = mutableSetOf<Point4>()
-    (DATAPATH / "day17.txt").useLines { lines ->
+    (DATAPATH / "2020/day17.txt").useLines { lines ->
         lines.forEachIndexed { y, line ->
             line.forEachIndexed { x, c ->
                 if (c == '#') {

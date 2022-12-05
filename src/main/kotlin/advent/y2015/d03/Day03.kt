@@ -1,6 +1,6 @@
 package advent.y2015.d03
 
-import advent.y2015.DATAPATH
+import advent.DATAPATH
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -47,7 +47,7 @@ fun partTwo(directions: List<Direction>): Int {
 
 
 fun main() {
-    val directions = (DATAPATH / "day03.txt").useLines { lines ->
+    val directions = (DATAPATH / "2015/day03.txt").useLines { lines ->
         lines.first().map { c ->
             when (c) {
                 '^' -> Direction.DOWN

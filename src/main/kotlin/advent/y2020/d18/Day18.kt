@@ -1,6 +1,6 @@
 package advent.y2020.d18
 
-import advent.y2020.DATAPATH
+import advent.DATAPATH
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -12,7 +12,7 @@ private fun evaluate(expression: String, from: Int? = null, to: Int? = null): Lo
 }
 
 fun main() {
-    val expressions = (DATAPATH / "day18.txt").useLines { it.toList() }
+    val expressions = (DATAPATH / "2020/day18.txt").useLines { it.toList() }
 
     expressions.sumOf { evaluate(it) }
         .also { println("Part one: $it") }

@@ -1,6 +1,6 @@
 package advent.y2020.d12
 
-import advent.y2020.DATAPATH
+import advent.DATAPATH
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 import kotlin.math.abs
@@ -110,7 +110,7 @@ private fun applyInstructions2(instructions: List<Instruction>,
 }
 
 fun main() {
-    val instructions = (DATAPATH / "day12.txt").useLines { it.map(::parseInstruction).toList() }
+    val instructions = (DATAPATH / "2020/day12.txt").useLines { it.map(::parseInstruction).toList() }
 
     applyInstructions1(instructions)
         .also { (x, y) -> println("Part one: ${abs(x) + abs(y)}") }

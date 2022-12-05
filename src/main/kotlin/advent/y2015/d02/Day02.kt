@@ -1,6 +1,6 @@
 package advent.y2015.d02
 
-import advent.y2015.DATAPATH
+import advent.DATAPATH
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -13,7 +13,7 @@ data class Box(val w: Int, val l: Int, val h: Int) {
 
 
 fun main() {
-    val boxes = (DATAPATH / "day02.txt").useLines { lines ->
+    val boxes = (DATAPATH / "2015/day02.txt").useLines { lines ->
         lines.toList().map { line ->
             val lineParts = line.split('x').map { it.toInt() }
             Box(lineParts[0], lineParts[1], lineParts[2])

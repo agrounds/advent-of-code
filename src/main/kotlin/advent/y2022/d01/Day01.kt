@@ -1,12 +1,12 @@
 package advent.y2022.d01
 
-import advent.y2022.DATAPATH
+import advent.DATAPATH
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
 
 fun main() {
-    val sums = (DATAPATH / "day01.txt").useLines { lines ->
+    val sums = (DATAPATH / "2022/day01.txt").useLines { lines ->
         lines.toList().fold(mutableListOf(0)) { sums, line ->
             if (line.isEmpty()) {
                 sums.add(0)

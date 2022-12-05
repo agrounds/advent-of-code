@@ -1,6 +1,6 @@
 package advent.y2015.d05
 
-import advent.y2015.DATAPATH
+import advent.DATAPATH
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -42,7 +42,7 @@ fun isNice2(string: String): Boolean {
 
 
 fun main() {
-    val strings = (DATAPATH / "day05.txt").useLines { lines ->
+    val strings = (DATAPATH / "2015/day05.txt").useLines { lines ->
         lines.toList()
     }
     strings

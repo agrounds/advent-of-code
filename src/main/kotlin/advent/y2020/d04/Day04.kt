@@ -1,6 +1,6 @@
 package advent.y2020.d04
 
-import advent.y2020.DATAPATH
+import advent.DATAPATH
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -75,7 +75,7 @@ private val requiredFields = setOf("byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pi
 private val validEyeColors = setOf("amb", "blu", "brn", "gry", "grn", "hzl", "oth")
 
 fun main() {
-    val passports = (DATAPATH / "day04.txt").useLines { parsePassports(it) }
+    val passports = (DATAPATH / "2020/day04.txt").useLines { parsePassports(it) }
 
     passports
         .count { it.keys.containsAll(requiredFields) }

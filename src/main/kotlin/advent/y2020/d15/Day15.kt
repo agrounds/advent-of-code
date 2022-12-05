@@ -27,7 +27,7 @@ fun main() {
     val testInput = listOf(0, 3, 6)
     val input = listOf(14, 8, 16, 0, 1, 17)
 
-    memoryGame(testInput, 2020).also { println("Test input: $it (should be 436)") }
+    memoryGame(testInput, 2020).also { println("2020/Test input: $it (should be 436)") }
     memoryGame(input, 2020).also { println("Part one: $it") }
     memoryGame(input, 30_000_000).also { println("Part two: $it") }
 }

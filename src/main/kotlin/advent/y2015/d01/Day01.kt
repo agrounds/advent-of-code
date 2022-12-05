@@ -1,12 +1,12 @@
 package advent.y2015.d01
 
-import advent.y2015.DATAPATH
+import advent.DATAPATH
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
 
 fun main() {
-    val line = (DATAPATH / "day01.txt").useLines { lines ->
+    val line = (DATAPATH / "2015/day01.txt").useLines { lines ->
         lines.first()
     }
     line

@@ -1,6 +1,6 @@
 package advent.y2015.d06
 
-import advent.y2015.DATAPATH
+import advent.DATAPATH
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -77,7 +77,7 @@ fun partTwo(instructions: List<Instruction>): Int {
 
 
 fun main() {
-    val instructions = (DATAPATH / "day06.txt").useLines { lines ->
+    val instructions = (DATAPATH / "2015/day06.txt").useLines { lines ->
         lines.toList().map(::parseInstruction)
     }
 

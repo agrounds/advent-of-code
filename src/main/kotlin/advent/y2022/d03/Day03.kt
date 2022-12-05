@@ -1,6 +1,6 @@
 package advent.y2022.d03
 
-import advent.y2022.DATAPATH
+import advent.DATAPATH
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -31,7 +31,7 @@ fun badgeItem(group: List<String>): Char =
 
 
 fun main() {
-    val rucksacks = (DATAPATH / "day03.txt").useLines { lines ->
+    val rucksacks = (DATAPATH / "2022/day03.txt").useLines { lines ->
         lines.toList()
     }
     rucksacks

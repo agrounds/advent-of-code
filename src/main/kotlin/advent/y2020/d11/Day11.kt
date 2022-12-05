@@ -1,6 +1,6 @@
 package advent.y2020.d11
 
-import advent.y2020.DATAPATH
+import advent.DATAPATH
 import java.lang.RuntimeException
 import kotlin.io.path.div
 import kotlin.io.path.useLines
@@ -141,7 +141,7 @@ private fun simulateOccupants2(grid: Grid): Grid {
 }
 
 fun main() {
-    val grid = (DATAPATH / "day11.txt").useLines { processGrid(it) }
+    val grid = (DATAPATH / "2020/day11.txt").useLines { processGrid(it) }
 
     simulateOccupants1(grid).let { it.flatten().count { s -> s == Space.OCCUPIED } }
         .also { println("Part one: $it") }

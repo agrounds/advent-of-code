@@ -1,6 +1,6 @@
 package advent.y2020.d09
 
-import advent.y2020.DATAPATH
+import advent.DATAPATH
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -54,7 +54,7 @@ private fun findRange(nums: List<Long>, targetSum: Long): Pair<Int, Int>? {
 }
 
 fun main() {
-    val nums = (DATAPATH / "day09.txt").useLines { lines ->
+    val nums = (DATAPATH / "2020/day09.txt").useLines { lines ->
         lines.map { it.toLong() }.toList()
     }
 

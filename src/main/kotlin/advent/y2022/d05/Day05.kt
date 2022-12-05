@@ -1,5 +1,5 @@
 package advent.y2022.d05
-import advent.y2022.DATAPATH
+import advent.DATAPATH
 import java.util.Stack
 import kotlin.io.path.div
 import kotlin.io.path.useLines
@@ -44,7 +44,7 @@ fun main() {
     // the list of moves.
     val tmpStacks = Array<MutableList<Char>>(9) { mutableListOf() }
 
-    (DATAPATH / "day05.txt").useLines { lines ->
+    (DATAPATH / "2022/day05.txt").useLines { lines ->
         var initStacks = true
         lines.forEach { line ->
             if (initStacks) {

@@ -1,6 +1,6 @@
 package advent.y2020.d05
 
-import advent.y2020.DATAPATH
+import advent.DATAPATH
 import java.lang.RuntimeException
 import kotlin.io.path.div
 import kotlin.io.path.useLines
@@ -16,7 +16,7 @@ private fun String.fromPlaneBinary(): Int = this.map { c ->
     }.joinToString("").toInt(2)
 
 fun main() {
-    val seatNumbers = (DATAPATH / "day05.txt").useLines { it.toList() }
+    val seatNumbers = (DATAPATH / "2020/day05.txt").useLines { it.toList() }
         .map { it.fromPlaneBinary() }
 
     val max = seatNumbers.maxOrNull()

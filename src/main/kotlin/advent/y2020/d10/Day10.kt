@@ -1,6 +1,6 @@
 package advent.y2020.d10
 
-import advent.y2020.DATAPATH
+import advent.DATAPATH
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -37,7 +37,7 @@ private fun countArrangements(adapters: List<Int>): Long {
 
 
 fun main() {
-    val adapters = (DATAPATH / "day10.txt").useLines { lines ->
+    val adapters = (DATAPATH / "2020/day10.txt").useLines { lines ->
         lines.map { it.toInt() }.toList()
     }.sorted()
 

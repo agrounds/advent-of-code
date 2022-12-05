@@ -1,11 +1,11 @@
 package advent.y2020.d06
 
-import advent.y2020.DATAPATH
+import advent.DATAPATH
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
 fun main() {
-    val groupedLines: List<List<String>> = (DATAPATH / "day06.txt").useLines { lines ->
+    val groupedLines: List<List<String>> = (DATAPATH / "2020/day06.txt").useLines { lines ->
         mutableListOf<MutableList<String>>(mutableListOf()).apply {
             lines.forEach { line ->
                 if (line.isBlank()) {

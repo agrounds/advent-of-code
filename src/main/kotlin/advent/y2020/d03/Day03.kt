@@ -1,6 +1,6 @@
 package advent.y2020.d03
 
-import advent.y2020.DATAPATH
+import advent.DATAPATH
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -23,7 +23,7 @@ private fun countTrees(grid: List<String>, right: Int, down: Int): Int {
 
 
 fun main() {
-    val grid = (DATAPATH / "day03.txt")
+    val grid = (DATAPATH / "2020/day03.txt")
         .useLines { it.toList() }
         .also {
             println("Part one: ${countTrees(it, 3, 1)}")

@@ -1,6 +1,6 @@
 package advent.y2020.d08
 
-import advent.y2020.DATAPATH
+import advent.DATAPATH
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -40,7 +40,7 @@ private fun executeProgram(program: List<Instruction>): ProgramResult {
 }
 
 fun main() {
-    val program = (DATAPATH / "day08.txt").useLines { lines ->
+    val program = (DATAPATH / "2020/day08.txt").useLines { lines ->
         lines.map { line ->
             val tokens = line.split(" ")
             Instruction(Op.valueOf(tokens[0].uppercase()), tokens[1].toInt())

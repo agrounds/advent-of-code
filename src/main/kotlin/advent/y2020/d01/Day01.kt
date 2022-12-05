@@ -1,6 +1,6 @@
 package advent.y2020.d01
 
-import advent.y2020.DATAPATH
+import advent.DATAPATH
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -41,7 +41,7 @@ fun findSumSlow(nums: List<Int>, target: Int, n: Int): List<Int>? {
 }
 
 fun main() {
-    val input = (DATAPATH / "day01.txt").useLines { lines ->
+    val input = (DATAPATH / "2020/day01.txt").useLines { lines ->
         lines.map { it.toInt() }.toList()
     }
 

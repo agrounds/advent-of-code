@@ -1,6 +1,6 @@
 package advent.y2020.d16
 
-import advent.y2020.DATAPATH
+import advent.DATAPATH
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -42,7 +42,7 @@ fun main() {
     var blankLines = 0
     val ruleLines = mutableListOf<String>()
     val ticketLines = mutableListOf<String>()
-    (DATAPATH / "day16.txt").useLines { lines ->
+    (DATAPATH / "2020/day16.txt").useLines { lines ->
         lines.forEach { line ->
             when {
                 line.isEmpty() -> blankLines++

@@ -1,6 +1,6 @@
 package advent.y2022.d04
 
-import advent.y2022.DATAPATH
+import advent.DATAPATH
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -15,7 +15,7 @@ fun overlappingPair(pair: List<Int>): Boolean =
 
 fun main() {
     // Pairs is a list of lists of ints. Each pair is a list of precisely four ints
-    val pairs = (DATAPATH / "day04.txt").useLines { lines ->
+    val pairs = (DATAPATH / "2022/day04.txt").useLines { lines ->
         lines.toList().map { line ->
             val (first, second) = line.split(',')
             first.split('-').map { it.toInt() } + second.split('-').map { it.toInt() }
