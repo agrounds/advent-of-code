@@ -13,7 +13,7 @@ enum class Operation {
 sealed class Token
 
 data class TokenList(val tokens: List<Token>) : Token()
-data class LitToken(val value: Long) : Token()
+data class NumberToken(val value: Long) : Token()
 data class OpToken(val op: Operation) : Token()
 
 // from inclusive, to exclusive
@@ -46,7 +46,7 @@ fun parseLine(line: String, from: Int? = null, to: Int? = null): Token {
             line[i] in "0123456789" -> {
                 var j = i + 1
                 while (j < stop && line[j] in "0123456789") j++
-                tokens.add(LitToken(line.substring(i, j).toLong()))
+                tokens.add(NumberToken(line.substring(i, j).toLong()))
                 i = j
             }
             line[i] == '+' -> {
