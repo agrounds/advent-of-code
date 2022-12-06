@@ -15,6 +15,7 @@ fun main() {
                 to lines.takeLastWhile { it.isNotBlank() })
         }
     val rootRule = parser.parseRuleNum(0)
+    rootRule.matches(messages[1])
     messages.count(rootRule::matches)
         .also { println("Part one: $it") }
 }
