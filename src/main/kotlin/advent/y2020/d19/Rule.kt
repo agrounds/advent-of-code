@@ -5,14 +5,15 @@ data class LiteralRule(val literal: String) : Rule()
 data class SequenceRule(val rules: List<Int>) : Rule()
 data class OrRule(val leftRules: List<Int>, val rightRules: List<Int>) : Rule()
 
+
 class RuleParser(private val ruleStrings: List<String>) {
-    private val parsedRules = mutableMapOf<Int, Rule>()
+    val parsedRules = mutableMapOf<Int, Rule>()
 
     init {
         ruleStrings.forEach { ruleString ->
             val colonIdx = ruleString.indexOf(':')
             val n = ruleString.substring(0 until colonIdx).toInt()
-            val parts = ruleString.substring(colonIdx + 1).split(" ")
+            val parts = ruleString.substring(colonIdx + 2).split(" ")
             val firstPart = parts.first()
             parsedRules[n] = when {
                 parts.size == 1 && firstPart[0] == '"' ->
