@@ -4,15 +4,12 @@ import advent.DATAPATH
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
-class Solver(private val rules: Map<Int, Rule>, private val partTwo: Boolean = false) {
+class Solver(private val rules: Map<Int, Rule>, private val string: String, private val partTwo: Boolean = false) {
     data class Key(val from: Int, val to: Int, val rule: Int)
 
     private val dp = mutableMapOf<Key, Boolean>()
-    private var string: String = ""
 
-    fun matches(string: String): Boolean {
-        this.string = string
-
+    fun matches(): Boolean {
         return checkMatches(0, string.length, 0)
     }
 
@@ -90,9 +87,9 @@ fun main() {
                 to lines.takeLastWhile { it.isNotBlank() })
         }
     messages.count {
-        Solver(rules).matches(it)
+        Solver(rules, it).matches()
     }.also { println("Part one: $it") }
     messages.count {
-        Solver(rules, partTwo = true).matches(it)
+        Solver(rules, it, partTwo = true).matches()
     }.also { println("Part two: $it") }
 }
