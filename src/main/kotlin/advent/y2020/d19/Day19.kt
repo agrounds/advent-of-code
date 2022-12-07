@@ -4,21 +4,32 @@ import advent.DATAPATH
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
-data class Key(val from: Int, val to: Int, val rule: Int)
+class Solver(private val rules: Map<Int, Rule>, private val partTwo: Boolean = false) {
+    data class Key(val from: Int, val to: Int, val rule: Int)
 
-class Solver(private val rules: Map<Int, Rule>) {
     private val dp = mutableMapOf<Key, Boolean>()
     private var string: String = ""
 
     fun matches(string: String): Boolean {
         this.string = string
 
-        return checkMatches(Key(0, string.length, 0))
+        return checkMatches(0, string.length, 0)
     }
 
-    private fun checkMatches(key: Key): Boolean {
+    private fun checkMatches(from: Int, to: Int, rule: Int): Boolean {
+        val key = Key(from, to, rule)
         if (key in dp) return dp[key]!!
-        val (from, to, rule) = key
+
+        if (partTwo) {
+            if (rule == 8) {
+                return (from != to && checkMatches8(from, to))
+                    .also { dp[key] = it }
+            }
+            if (rule == 11) {
+                return (from != to && checkMatches11(from, to))
+                    .also { dp[key] = it }
+            }
+        }
 
         return when (val r = rules[rule]) {
             is LiteralRule ->
@@ -41,7 +52,29 @@ class Solver(private val rules: Map<Int, Rule>) {
             return from == to
         }
         return (from+1..to).any { mid ->
-            checkMatches(Key(from, mid, rules[0])) && checkMatchesSequence(mid, to, rules.subList(1, rules.size))
+            checkMatches(from, mid, rules[0]) && checkMatchesSequence(mid, to, rules.subList(1, rules.size))
+        }
+    }
+
+    // special case: in part two, the rule is
+    //   8: 42 | 8 42
+    // which means "any number of 42s"
+    private fun checkMatches8(from: Int, to: Int): Boolean {
+        if (from == to) return true
+        return (from+1..to).any { mid ->
+            checkMatches(from, mid, 42) && checkMatches8(mid, to)
+        }
+    }
+
+    // special case: in part two, the rule is
+    //   11: 42 31 | 42 11 31
+    // which means any number of 42s, followed by the same number of 31s
+    private fun checkMatches11(from: Int, to: Int): Boolean {
+        if (from == to) return true
+        return (from+1 until to).any { mid1 ->
+            checkMatches(from, mid1, 42) && (mid1 until to).any { mid2 ->
+                checkMatches11(mid1, mid2) && checkMatches(mid2, to, 31)
+            }
         }
     }
 }
@@ -59,4 +92,7 @@ fun main() {
     messages.count {
         Solver(rules).matches(it)
     }.also { println("Part one: $it") }
+    messages.count {
+        Solver(rules, partTwo = true).matches(it)
+    }.also { println("Part two: $it") }
 }
