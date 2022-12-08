@@ -29,7 +29,7 @@ fun Tile.rotate(times: Int): Tile = TODO()
  */
 data class TileOrientation(val num: Int, val flip: Boolean, val rotate: Int)
 
-fun findEdgeCornerTiles(tilesMap: Map<Int, Tile>): Pair<List<Int>, List<Int>> {
+fun findCornerTiles(tilesMap: Map<Int, Tile>): List<Int> {
     // map from an edge to all tiles having it as an edge, possibly flipped
     val tileEdges: MutableMap<String, MutableSet<Int>> = mutableMapOf()
     tilesMap.forEach { (num, tile) ->
@@ -47,9 +47,9 @@ fun findEdgeCornerTiles(tilesMap: Map<Int, Tile>): Pair<List<Int>, List<Int>> {
         .groupBy { it }
         .mapValues { (_, v) -> v.size }.entries
         // edge tiles appear twice here, and corners appear four times
-        .partition { (_, count) -> count == 2 }
-        .let { (edgeTiles, cornerTiles) ->
-            edgeTiles.map { it.key } to cornerTiles.map { it.key }
+        .filter { (_, count) -> count == 4 }
+        .let { cornerTiles ->
+            cornerTiles.map { it.key }
         }
 }
 
@@ -62,7 +62,7 @@ fun main() {
         }
         map
     }
-    val (edgeTiles, cornerTiles) = findEdgeCornerTiles(tilesMap)
+    val cornerTiles = findCornerTiles(tilesMap)
     cornerTiles.map { it.toLong() }
         .reduce { a, b -> a * b }
         .also{ println("Part one: $it") }
