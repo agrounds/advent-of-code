@@ -22,8 +22,6 @@ fun Tile.edges(): List<String> = listOf(
     edges + edges.map { it.reversed() }
 }
 
-fun Tile.flip(): Tile = TODO()
-fun Tile.rotate(times: Int): Tile = TODO()
 
 /**
  * Order matters. Here, we optionally flip across the vertical axis, then rotate
@@ -77,7 +75,7 @@ class Solver(private val tilesMap: Map<Int, Tile>) {
      *   cw top, cw right, cw bottom, cw left,
      *   ccw top, ccw right, ccw bottom, ccw left
      */
-    private fun TileOrientation.edges(): List<String>  =
+    fun TileOrientation.edges(): List<String>  =
         tilesMap[num]!!.edges().take(4).let { unflippedEdges ->
             if (flip) {
                 unflippedEdges
@@ -97,7 +95,41 @@ class Solver(private val tilesMap: Map<Int, Tile>) {
             edges + edges.map { it.reversed() }
         }
 
-    fun solvePuzzle() {
+    fun TileOrientation.transformed(): Tile {
+        val rowsFirst = rotate % 2 == 0
+        val reverseRows = if (flip) {
+            rotate in setOf(0, 1)
+        } else {
+            rotate in setOf(2, 3)
+        }
+        val reverseCols = rotate in setOf(1, 2)
+
+        val original = tilesMap[num]!!
+        val tileSideLen = original.size
+
+        return if (rowsFirst) {
+            (0 until tileSideLen)
+                .let { if (reverseCols) it.reversed() else it }
+                .map { j ->
+                    original[j].let {
+                        if (reverseRows) it.reversed()
+                        else it
+                    }
+                }
+        } else {
+            (0 until tileSideLen)
+                .let { if (reverseRows) it.reversed() else it }
+                .map { i ->
+                    (0 until tileSideLen)
+                        .let { if (reverseCols) it.reversed() else it }
+                        .map { j -> original[j][i] }
+                        .toCharArray()
+                        .let(::String)
+                }
+        }
+    }
+
+    fun solvePuzzle(): List<List<String>> {
         val firstCorner = cornerTiles[0]
         tilesMap[firstCorner]!!.edges()
             .take(4)
@@ -133,8 +165,24 @@ class Solver(private val tilesMap: Map<Int, Tile>) {
             }
             (1 until sideLen).forEach { j ->
                 // place tile based on the one to the left of this spot
+                val tileLeft = table[i][j-1] ?: throw RuntimeException("Tile not placed at ($i, ${j-1})!")
+                val rightEdge = tileLeft.edges()[1]
+                val nextTile = tilesByEdge[rightEdge]!!
+                    .filterNot { it == tileLeft.num }
+                    .first()
+                table[i][j] = tilesMap[nextTile]!!
+                    .edges()
+                    .indexOf(rightEdge)
+                    .let { matchingEdgeIdx ->
+                        // if tileAbove's CW right edge matches one of our CW edges, then a flip is required
+                        if (matchingEdgeIdx < 4) TileOrientation(nextTile, true, (matchingEdgeIdx + 3) % 4)
+                        // if tileAbove's CW bottom edge matches one of our CCW edges, then no flip is required
+                        else TileOrientation(nextTile, false, (7 - matchingEdgeIdx) % 4)
+                    }
             }
         }
+
+        return emptyList()
     }
 }
 
@@ -151,4 +199,5 @@ fun main() {
         .map { it.toLong() }
         .reduce { a, b -> a * b }
         .also { println("Part one: $it") }
+    solver.solvePuzzle()
 }
