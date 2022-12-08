@@ -1,11 +1,11 @@
 package advent.y2022.d08
 
 import advent.DATAPATH
-import advent.peekOrNull
-import kotlin.math.abs
-import java.util.Stack
+import java.util.ArrayDeque
+import java.util.Deque
 import kotlin.io.path.div
 import kotlin.io.path.useLines
+import kotlin.math.abs
 
 /**
  * Collection of walks to take across the grid of trees. A walk is a list of
@@ -60,12 +60,15 @@ fun maxScenicScore(grid: List<List<Int>>): Int {
     }
 
     getWalks(size).forEach { walk ->
-        val prevMaxes = Stack<Pair<Int, Int>>()
+        val prevMaxes: Deque<Pair<Int, Int>> = ArrayDeque()
+        // determine direction of this walk: xDirection or yDirection, and increasing or decreasing
         val xDirection = walk[0].first != walk[1].first
         val increasing =
             if (xDirection) walk[0].first < walk[1].first
             else walk[0].second < walk[1].second
 
+        // find the (positive) distance between the two points on the current walk, or the distance
+        // from the point to the beginning of the walk in the case that other is null
         infix fun Pair<Int, Int>.diff(other: Pair<Int, Int>?): Int {
             val (thisX, thisY) = this
             if (other == null) {
@@ -97,9 +100,9 @@ fun maxScenicScore(grid: List<List<Int>>): Int {
                 // either we're the tallest tree so far, or prevMax is a tree shorter than this
                 // one. the score is the distance from this tree to the previous _strictly_ taller
                 // tree (which is prevMaxes.peek()), or this is the tallest tree so far and we should
-                // diff null. point diff peekOrNull() handles both cases.
+                // diff null. point diff peek() handles both cases.
                 else -> {
-                    scores[i][j] *= point diff prevMaxes.peekOrNull()
+                    scores[i][j] *= point diff prevMaxes.peek()
                 }
             }
             prevMaxes.push(point)
