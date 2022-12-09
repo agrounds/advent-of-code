@@ -33,6 +33,7 @@ class Solver(private val tilesMap: Map<Int, Tile>) {
     // the tiles will assemble into a square image, so there are a
     // square number of them
     private val sideLen = sqrt(tilesMap.size)
+    private val tileSideLen = tilesMap.values.first().size
 
     // a table on which to lay down tiles to solve the puzzle. it
     // is just big enough to store the solved puzzle, so table[0][0]
@@ -105,7 +106,6 @@ class Solver(private val tilesMap: Map<Int, Tile>) {
         val reverseCols = rotate in setOf(1, 2)
 
         val original = tilesMap[num]!!
-        val tileSideLen = original.size
 
         return if (rowsFirst) {
             (0 until tileSideLen)
@@ -129,7 +129,7 @@ class Solver(private val tilesMap: Map<Int, Tile>) {
         }
     }
 
-    fun solvePuzzle(): List<List<String>> {
+    fun solvePuzzle(): List<String> {
         val firstCorner = cornerTiles[0]
         tilesMap[firstCorner]!!.edges()
             .take(4)
@@ -182,7 +182,37 @@ class Solver(private val tilesMap: Map<Int, Tile>) {
             }
         }
 
-        return emptyList()
+        val ret = Array(sideLen * tileSideLen - 2) { "" }
+        table.forEachIndexed { i, row ->
+            val strings = row.map {
+                if (it == null) throw RuntimeException("Table not filled out!")
+                tilesMap[it.num]!!
+            }.reduce { tileA, tileB ->
+                tileA.indices.map {
+                    tileA[it] + tileB[it]
+                }.map {
+                    // strip off border characters
+                    it.substring(1 until it.length - 1)
+                }
+            }
+            val jRange = when (i) {
+                0 -> {
+                    // don't include first row, it's part of the border
+                    1 until strings.size
+                }
+                table.size - 1 -> {
+                    // don't include last row, it's part of the border
+                    0 until strings.size - 1
+                }
+                else -> {
+                    strings.indices
+                }
+            }
+            jRange.forEach { j ->
+                ret[tileSideLen * i + j - 1] = strings[j]
+            }
+        }
+        return ret.toList()
     }
 }
 
@@ -199,5 +229,5 @@ fun main() {
         .map { it.toLong() }
         .reduce { a, b -> a * b }
         .also { println("Part one: $it") }
-    solver.solvePuzzle()
+    val solvedPuzzle = solver.solvePuzzle()
 }
