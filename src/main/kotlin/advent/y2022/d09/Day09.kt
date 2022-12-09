@@ -7,34 +7,39 @@ import kotlin.math.abs
 
 data class Move(val direction: Char, val times: Int)
 
-fun trackTail(moves: List<Move>): Int {
-    var headX = 0
-    var headY = 0
-    var tailX = 0
-    var tailY = 0
-    val tailVisited = mutableSetOf(tailX to tailY)
+fun trackTail(moves: List<Move>, numKnots: Int): Int {
+    val knotsX = IntArray(numKnots)
+    val knotsY = IntArray(numKnots)
+
+    val tailVisited = mutableSetOf(knotsX.last() to knotsY.last())
     moves.forEach { move ->
         repeat(move.times) {
             when (move.direction) {
-                'U' -> headY++
-                'D' -> headY--
-                'R' -> headX++
-                'L' -> headX--
+                'U' -> knotsY[0]++
+                'D' -> knotsY[0]--
+                'R' -> knotsX[0]++
+                'L' -> knotsX[0]--
                 else -> throw RuntimeException("Illegal direction ${move.direction}")
             }
-            if (abs(headX - tailX) > 1 || abs(headY - tailY) > 1) {
-                tailX = when {
-                    tailX < headX -> tailX + 1
-                    tailX > headX -> tailX - 1
-                    else -> tailX
-                }
-                tailY = when {
-                    tailY < headY -> tailY + 1
-                    tailY > headY -> tailY - 1
-                    else -> tailY
+            (1 until numKnots).forEach { i ->
+                val headX = knotsX[i-1]
+                val headY = knotsY[i-1]
+                val tailX = knotsX[i]
+                val tailY = knotsY[i]
+                if (abs(headX - tailX) > 1 || abs(headY - tailY) > 1) {
+                    knotsX[i] = when {
+                        tailX < headX -> tailX + 1
+                        tailX > headX -> tailX - 1
+                        else -> tailX
+                    }
+                    knotsY[i] = when {
+                        tailY < headY -> tailY + 1
+                        tailY > headY -> tailY - 1
+                        else -> tailY
+                    }
                 }
             }
-            tailVisited.add(tailX to tailY)
+            tailVisited.add(knotsX.last() to knotsY.last())
         }
     }
     return tailVisited.size
@@ -47,6 +52,8 @@ fun main() {
             Move(line.first(), line.substring(2).toInt())
         }
     }
-    trackTail(moves)
+    trackTail(moves, 2)
         .also { println("Part one: $it") }
+    trackTail(moves, 10)
+        .also { println("Part two: $it") }
 }
