@@ -1,8 +1,10 @@
 package advent.y2022.d10
 
 import advent.DATAPATH
+import advent.y2015.d07.MAX_SIGNAL
 import kotlin.io.path.div
 import kotlin.io.path.useLines
+import kotlin.math.abs
 
 sealed class Instruction
 object Noop : Instruction()
@@ -18,8 +20,8 @@ fun signalStrengths(instructions: List<Instruction>): Int {
             totalStrength += currentCycle * x
     }
 
-    instructions.forEach { instruction ->
-        when (instruction) {
+    instructions.forEach {
+        when (it) {
             is Noop -> {
                 updateStrength()
                 currentCycle++
@@ -29,12 +31,44 @@ fun signalStrengths(instructions: List<Instruction>): Int {
                 currentCycle++
                 updateStrength()
                 currentCycle++
-                x += instruction.value
+                x += it.value
             }
         }
     }
 
     return totalStrength
+}
+
+fun simulateCRT(instructions: List<Instruction>): String {
+    val screen = Array(6) { CharArray(40) { Character.MIN_VALUE } }
+    var i = 0
+    var j = 0
+    var x = 1
+
+    fun step() {
+        screen[j][i] =
+            if (abs(x - i) <= 1) '#'
+            else '.'
+        i++
+        if (i == 40) {
+            i = 0
+            j++
+        }
+    }
+
+    instructions.forEach {
+        when (it) {
+            is Noop ->
+                step()
+            is Addx -> {
+                step()
+                step()
+                x += it.value
+            }
+        }
+    }
+
+    return screen.joinToString("\n") { String(it) }
 }
 
 
@@ -52,4 +86,6 @@ fun main() {
 
     signalStrengths(instructions)
         .also { println("Part one: $it") }
+    simulateCRT(instructions)
+        .also { println("Part two:\n$it") }
 }
