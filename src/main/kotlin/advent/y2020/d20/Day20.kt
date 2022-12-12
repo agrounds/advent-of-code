@@ -32,13 +32,13 @@ data class TileOrientation(val num: Int, val flip: Boolean, val rotate: Int)
 class Solver(private val tilesMap: Map<Int, Tile>) {
     // the tiles will assemble into a square image, so there are a
     // square number of them
-    private val sideLen = sqrt(tilesMap.size)
+    private val numTilesPerSide = sqrt(tilesMap.size)
     private val tileSideLen = tilesMap.values.first().size
 
     // a table on which to lay down tiles to solve the puzzle. it
     // is just big enough to store the solved puzzle, so table[0][0]
     // must be a corner piece in correct orientation
-    private val table = Array(sideLen) { Array<TileOrientation?>(sideLen) { null } }
+    private val table = Array(numTilesPerSide) { Array<TileOrientation?>(numTilesPerSide) { null } }
 
     val cornerTiles: List<Int>
     private val puzzleEdges: Set<String>
@@ -145,7 +145,7 @@ class Solver(private val tilesMap: Map<Int, Tile>) {
                 table[0][0] = TileOrientation(firstCorner, false, firstCornerTurns)
             }
 
-        (0 until sideLen).forEach { i ->
+        (0 until numTilesPerSide).forEach { i ->
             if (i != 0) {
                 // place tile based on the one above this spot
                 val tileAbove = table[i-1][0] ?: throw RuntimeException("Tile not placed at (${i-1}, 0)!")
@@ -163,7 +163,7 @@ class Solver(private val tilesMap: Map<Int, Tile>) {
                         else TileOrientation(nextTile, false, (8 - matchingEdgeIdx) % 4)
                     }
             }
-            (1 until sideLen).forEach { j ->
+            (1 until numTilesPerSide).forEach { j ->
                 // place tile based on the one to the left of this spot
                 val tileLeft = table[i][j-1] ?: throw RuntimeException("Tile not placed at ($i, ${j-1})!")
                 val rightEdge = tileLeft.edges()[1]
@@ -182,38 +182,50 @@ class Solver(private val tilesMap: Map<Int, Tile>) {
             }
         }
 
-        val ret = Array(sideLen * tileSideLen - 2) { "" }
+        val ret = Array(numTilesPerSide * (tileSideLen - 1) - 1) { "" }
         table.forEachIndexed { i, row ->
             val strings = row.map {
                 if (it == null) throw RuntimeException("Table not filled out!")
-                tilesMap[it.num]!!
+                it.transformed()
+            }.mapIndexed { tileNum, tile ->
+                tile.map {
+                    // remove first and last character - they're part of the border, or repeated in adjacent tile
+                    if (tileNum == 0) it.substring(1, it.length - 1)
+                    // remove last character - it's part of the border or repeated in adjacent tile
+                    else it.substring(0, it.length - 1)
+                }
             }.reduce { tileA, tileB ->
                 tileA.indices.map {
                     tileA[it] + tileB[it]
-                }.map {
-                    // strip off border characters
-                    it.substring(1 until it.length - 1)
                 }
             }
-            val jRange = when (i) {
-                0 -> {
-                    // don't include first row, it's part of the border
-                    1 until strings.size
-                }
-                table.size - 1 -> {
-                    // don't include last row, it's part of the border
-                    0 until strings.size - 1
-                }
-                else -> {
-                    strings.indices
-                }
+
+            val jRange = if (i == 0) {
+                // don't include first or last row
+                // first one is part of the border
+                // last one is repeated in tiles below this
+                1 until strings.size - 1
+            } else {
+                // don't include last row
+                // it's part of the border or repeated in tiles below this
+                0 until strings.size - 1
             }
+
             jRange.forEach { j ->
-                ret[tileSideLen * i + j - 1] = strings[j]
+                ret[(tileSideLen - 1) * i + j - 1] = strings[j]
             }
         }
         return ret.toList()
     }
+}
+
+// sea monsters look like this
+//                   #
+// #    ##    ##    ###
+//  #  #  #  #  #  #
+// size: 20x3
+fun findSeaMonsters(puzzle: List<String>): Int {
+    
 }
 
 
