@@ -6,7 +6,7 @@ import kotlin.io.path.useLines
 
 class Monkey(startingItems: List<Long>, val operation: (Long) -> Long, val test: (Long) -> Int) {
     private val items = ArrayDeque(startingItems)
-    var inspections = 0
+    var inspections = 0L
         private set
 
     fun handleItem(): Pair<Long, Int> =
@@ -76,4 +76,13 @@ fun main() {
         .takeLast(2)
         .let { (a, b) -> a * b }
         .also { println("Part one: $it") }
+
+    repeat(10_000) {
+        doRound(monkeysTwo)
+    }
+    monkeysTwo.map { it.inspections }
+        .sorted()
+        .takeLast(2)
+        .let { (a, b) -> a * b }
+        .also { println("Part two: $it") }
 }
