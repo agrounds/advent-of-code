@@ -24,7 +24,8 @@ fun Grid.height(point: Point): Int? = point.let { (x, y) ->
     }
 }
 
-class Solver(private val grid: Grid, start: Point) {
+// Find min distance path from `start` to any given target point via Dikjstra's algorithm
+class PartOneSolver(private val grid: Grid, start: Point) {
     private val toVisit = mutableSetOf(start)
     private val visited = mutableSetOf<Point>()
     private val distances = Array(grid.size) { IntArray(grid.first().size) { Integer.MAX_VALUE } }
@@ -44,6 +45,7 @@ class Solver(private val grid: Grid, start: Point) {
         while (to !in visited) {
             val next = toVisit.minByOrNull(::currDistance)
                 ?: throw RuntimeException("Set of points to visit is empty even though graph is not fully explored!")
+
             toVisit.remove(next)
             neighbors(next)
                 .filterNot { it in visited }
@@ -54,11 +56,49 @@ class Solver(private val grid: Grid, start: Point) {
                     )
                     toVisit.add(neighbor)
                 }
-
             visited.add(next)
-
         }
         return currDistance(to)
+    }
+}
+
+// Find shortest path from any minimum-height starting point to the `end` point via Dijstra's algorithm.
+// This solver works backwards, allowing points to be neighbors if the elevation goes up, or goes down by at most 1.
+class PartTwoSolver(private val grid: Grid, end: Point) {
+    private val toVisit = mutableSetOf(end)
+    private val visited = mutableSetOf<Point>()
+    private val distances = Array(grid.size) { IntArray(grid.first().size) { Integer.MAX_VALUE } }
+        .apply { this[end.y][end.x] = 0 }
+
+    private fun neighbors(point: Point): List<Point> =
+        listOf(point.left(), point.right(), point.up(), point.down())
+            .filter { neighbor ->
+                grid.height(neighbor).let {
+                    it != null && it >= grid.height(point)!! - 1
+                }
+            }
+
+    private fun currDistance(point: Point): Int = distances[point.y][point.x]
+
+    fun minPath(startingHeight: Int): Int? {
+        while (toVisit.isNotEmpty()) {
+            val next = toVisit.minByOrNull(::currDistance)!!
+            if (grid.height(next) == startingHeight)
+                return currDistance(next)
+
+            toVisit.remove(next)
+            neighbors(next)
+                .filterNot { it in visited }
+                .forEach { neighbor ->
+                    distances[neighbor.y][neighbor.x] = minOf(
+                        currDistance(neighbor),
+                        currDistance(next) + 1
+                    )
+                    toVisit.add(neighbor)
+                }
+            visited.add(next)
+        }
+        return null
     }
 }
 
@@ -85,7 +125,8 @@ fun main() {
             }
         }
     }
-    val solver = Solver(grid, start)
-    solver.minDistance(end)
+    PartOneSolver(grid, start).minDistance(end)
         .also { println("Part one: $it") }
+    PartTwoSolver(grid, end).minPath(0)
+        .also { println("Part two: $it") }
 }
