@@ -22,6 +22,17 @@ fun Tile.edges(): List<String> = listOf(
     edges + edges.map { it.reversed() }
 }
 
+fun rotate(puzzle: List<String>): List<String> =
+    puzzle[0].indices.map { x ->
+        puzzle.indices.reversed().map { y ->
+            puzzle[y][x]
+        }.toCharArray()
+            .let(::String)
+    }
+
+fun flip(puzzle: List<String>): List<String> =
+    puzzle.map { it.reversed() }
+
 
 /**
  * Order matters. Here, we optionally flip across the vertical axis, then rotate
@@ -225,12 +236,28 @@ class Solver(private val tilesMap: Map<Int, Tile>) {
 //  #  #  #  #  #  #
 // size: 20x3
 fun findSeaMonsters(puzzle: List<String>): Int {
-    
+    var orientedPuzzle = puzzle
+    val seaMonster = listOf(18 to 0) +
+        listOf(0, 5, 6, 11, 12, 17, 18, 19).map { it to 1 } +
+        listOf(1, 4, 7, 10, 13, 16).map { it to 2 }
+    repeat(8) { time ->
+        var ret = 0
+        (0..orientedPuzzle.size - 3).forEach { y ->
+            (0..orientedPuzzle[y].length - 20).forEach { x ->
+                if (seaMonster.all { (i, j) -> orientedPuzzle[y+j][x+i] == '#' }) ret++
+            }
+        }
+        if (ret > 0) return ret
+        orientedPuzzle =
+            if (time == 3) flip(orientedPuzzle)
+            else rotate(orientedPuzzle)
+    }
+    return 0
 }
 
 
 fun main() {
-    val solver = (DATAPATH / "2020/day20.txt").useLines { lines ->
+    val solver = (DATAPATH / "2020/day20-example.txt").useLines { lines ->
         val map = mutableMapOf<Int, Tile>()
         lines.chunked(12).forEach { chunk ->
             map[chunk.first().substring(5, 9).toInt()] = chunk.subList(1, 11)
@@ -241,5 +268,7 @@ fun main() {
         .map { it.toLong() }
         .reduce { a, b -> a * b }
         .also { println("Part one: $it") }
-    val solvedPuzzle = solver.solvePuzzle()
+    solver.solvePuzzle()
+        .let(::findSeaMonsters)
+        .also { println("Part two: $it") }
 }
