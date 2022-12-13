@@ -193,17 +193,15 @@ class Solver(private val tilesMap: Map<Int, Tile>) {
             }
         }
 
-        val ret = Array(numTilesPerSide * (tileSideLen - 1) - 1) { "" }
+        val ret = Array(numTilesPerSide * (tileSideLen - 2)) { "" }
         table.forEachIndexed { i, row ->
             val strings = row.map {
                 if (it == null) throw RuntimeException("Table not filled out!")
                 it.transformed()
-            }.mapIndexed { tileNum, tile ->
+            }.map { tile ->
                 tile.map {
-                    // remove first and last character - they're part of the border, or repeated in adjacent tile
-                    if (tileNum == 0) it.substring(1, it.length - 1)
-                    // remove last character - it's part of the border or repeated in adjacent tile
-                    else it.substring(0, it.length - 1)
+                    // remove first and last character - they're part of the tile's border
+                    it.substring(1, it.length - 1)
                 }
             }.reduce { tileA, tileB ->
                 tileA.indices.map {
@@ -211,19 +209,9 @@ class Solver(private val tilesMap: Map<Int, Tile>) {
                 }
             }
 
-            val jRange = if (i == 0) {
-                // don't include first or last row
-                // first one is part of the border
-                // last one is repeated in tiles below this
-                1 until strings.size - 1
-            } else {
-                // don't include last row
-                // it's part of the border or repeated in tiles below this
-                0 until strings.size - 1
-            }
-
-            jRange.forEach { j ->
-                ret[(tileSideLen - 1) * i + j - 1] = strings[j]
+            // don't include first or last row, they're part of the tiles' borders
+            (1 until strings.size - 1).forEach { j ->
+                ret[(tileSideLen - 2) * i + j - 1] = strings[j]
             }
         }
         return ret.toList()
