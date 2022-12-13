@@ -229,13 +229,17 @@ fun findSeaMonsters(puzzle: List<String>): Int {
         listOf(0, 5, 6, 11, 12, 17, 18, 19).map { it to 1 } +
         listOf(1, 4, 7, 10, 13, 16).map { it to 2 }
     repeat(8) { time ->
-        var ret = 0
+        val seaMonserPoints = mutableSetOf<Pair<Int, Int>>()
         (0..orientedPuzzle.size - 3).forEach { y ->
             (0..orientedPuzzle[y].length - 20).forEach { x ->
-                if (seaMonster.all { (i, j) -> orientedPuzzle[y+j][x+i] == '#' }) ret++
+                if (seaMonster.all { (i, j) -> orientedPuzzle[y+j][x+i] == '#' }) {
+                    seaMonserPoints.addAll(seaMonster.map { (i, j) -> (x+i) to (y+j) })
+                }
             }
         }
-        if (ret > 0) return ret
+        if (seaMonserPoints.isNotEmpty()) {
+            return puzzle.sumOf { row -> row.count { it == '#' } } - seaMonserPoints.size
+        }
         orientedPuzzle =
             if (time == 3) flip(orientedPuzzle)
             else rotate(orientedPuzzle)
@@ -245,7 +249,7 @@ fun findSeaMonsters(puzzle: List<String>): Int {
 
 
 fun main() {
-    val solver = (DATAPATH / "2020/day20-example.txt").useLines { lines ->
+    val solver = (DATAPATH / "2020/day20.txt").useLines { lines ->
         val map = mutableMapOf<Int, Tile>()
         lines.chunked(12).forEach { chunk ->
             map[chunk.first().substring(5, 9).toInt()] = chunk.subList(1, 11)
