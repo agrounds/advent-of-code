@@ -41,23 +41,28 @@ class Solver(input: Sequence<String>) {
         maxDepth = tmpMaxDepth
     }
 
-    fun simulateFallingSand(sandSource: Point): Int {
+    fun simulateFallingSand(sandSource: Point, partOne: Boolean): Int {
         val bp = blockedPoints.toMutableSet()
+
+        fun isBlocked(point: Point): Boolean =
+            if (partOne) point in bp
+            else point in bp || point.y >= maxDepth + 2
 
         fun simulateOne(): Boolean {
             var sand = sandSource
             while (true) {
-                if (sand.y > maxDepth) return false
+                if (partOne && sand.y > maxDepth) return false
+                if (!partOne && sandSource in bp) return false
                 when {
-                    sand.copy(y = sand.y + 1) !in bp -> {
+                    !isBlocked(sand.copy(y = sand.y + 1)) -> {
                         sand = sand.copy(y = sand.y + 1)
                     }
 
-                    Point(sand.x - 1, sand.y + 1) !in bp -> {
+                    !isBlocked(Point(sand.x - 1, sand.y + 1)) -> {
                         sand = Point(sand.x - 1, sand.y + 1)
                     }
 
-                    Point(sand.x + 1, sand.y + 1) !in bp -> {
+                    !isBlocked(Point(sand.x + 1, sand.y + 1)) -> {
                         sand = Point(sand.x + 1, sand.y + 1)
                     }
 
@@ -79,6 +84,8 @@ class Solver(input: Sequence<String>) {
 
 fun main() {
     val solver = (DATAPATH / "2022/day14.txt").useLines { Solver(it) }
-    solver.simulateFallingSand(Point(500, 0))
+    solver.simulateFallingSand(Point(500, 0), true)
         .also { println("Part one: $it") }
+    solver.simulateFallingSand(Point(500, 0), false)
+        .also { println("Part two: $it") }
 }
