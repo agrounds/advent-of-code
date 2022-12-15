@@ -9,88 +9,90 @@ data class ListNode(var prev: ListNode?, var next: ListNode?, val value: Int) {
     override fun toString() = "ListNode(prev=${prev?.value}, (value=$value), next=${next?.value})"
 }
 
-fun decrement(cup: Int, numCups: Int): Int = (cup + numCups - 2) % numCups + 1
+class Solver(start: String, private val numCups: Int) {
+    // map of value -> ListNode containing that value
+    private val cups: Map<Int, ListNode>
 
-fun doMove(cups: List<Int>): List<Int> {
-    var next = decrement(cups.first(), 9)
-    val taken = cups.subList(1, 4)
-    while (next in taken) next = decrement(next, 9)
-    val nextIdx = cups.indexOf(next)
-    return listOf(cups.first()) + cups.subList(4, nextIdx + 1) + taken + cups.subList(nextIdx + 1, cups.size)
-}
+    // initializes a circular doubly linked list of cups
+    init {
+        val startInts = start.map { it - '0' }
+        val ret = mutableMapOf<Int, ListNode>()
+        var prev = ListNode(null, null, startInts.first())
+            .also { ret[it.value] = it }
+        startInts.subList(1, startInts.size).forEach { value ->
+            val curr = ListNode(prev, null, value)
+            prev.next = curr
+            ret[curr.value] = curr
+            prev = curr
+        }
+        (10..numCups).forEach { value ->
+            val curr = ListNode(prev, null, value)
+            prev.next = curr
+            ret[curr.value] = curr
+            prev = curr
+        }
+        ret[startInts.first()]!!.let {
+            prev.next = it
+            it.prev = prev
+        }
+        cups = ret
+    }
 
-// Initializes a circular doubly linked list of cups.
-// Returns map of value -> ListNode containing that value.
-fun initCupList(start: List<Int>): Map<Int, ListNode> {
-    val ret = mutableMapOf<Int, ListNode>()
-    var prev = ListNode(null, null, start.first())
-        .also { ret[it.value] = it }
-    start.subList(1, start.size).forEach { value ->
-        val curr = ListNode(prev, null, value)
-        prev.next = curr
-        ret[curr.value] = curr
-        prev = curr
-    }
-    (10..1_000_000).forEach { value ->
-        val curr = ListNode(prev, null, value)
-        prev.next = curr
-        ret[curr.value] = curr
-        prev = curr
-    }
-    ret[start.first()]!!.let {
-        prev.next = it
-        it.prev = prev
-    }
-    return ret
-}
+    private fun decrement(cup: Int): Int =
+        (cup + numCups - 2) % numCups + 1
 
-// Returns next current cup
-fun doMove(cups: Map<Int, ListNode>, currentCup: Int): Int {
-    val curr = cups[currentCup]!!
-    val taken = listOf(
-        curr.next!!,
-        curr.next!!.next!!,
-        curr.next!!.next!!.next!!,
-    )
-    taken.last().next!!.let {
-        curr.next = it
-        it.prev = curr
+    // returns next current cup
+    fun doMove(currentCup: Int): Int {
+        val curr = cups[currentCup]!!
+        val taken = listOf(
+            curr.next!!,
+            curr.next!!.next!!,
+            curr.next!!.next!!.next!!,
+        )
+        taken.last().next!!.let {
+            curr.next = it
+            it.prev = curr
+        }
+        var dest = decrement(currentCup)
+        while (dest in taken.map { it.value }) dest = decrement(dest)
+        val destBegin = cups[dest]!!
+        val destEnd = destBegin.next!!
+        taken.first().let {
+            it.prev = destBegin
+            destBegin.next = it
+        }
+        taken.last().let {
+            it.next = destEnd
+            destEnd.prev = it
+        }
+        return curr.next!!.value
     }
-    var dest = decrement(currentCup, 1_000_000)
-    while (dest in taken.map { it.value }) dest = decrement(dest, 1_000_000)
-    val destBegin = cups[dest]!!
-    val destEnd = destBegin.next!!
-    taken.first().let {
-        it.prev = destBegin
-        destBegin.next = it
-    }
-    taken.last().let {
-        it.next = destEnd
-        destEnd.prev = it
-    }
-    return curr.next!!.value
+
+    fun getCup(cupValue: Int): ListNode? = cups[cupValue]
 }
 
 
 fun main() {
     val start = (DATAPATH / "2020/day23.txt").useLines { lines ->
-        lines.first().map { it - '0' }
+        lines.first()
     }
-    var cups = start
+    val solver1 = Solver(start, 9)
+    var curr1 = start.first() - '0'
     repeat(100) {
-        cups = doMove(cups)
-        cups = cups.subList(1, cups.size) + listOf(cups.first())
+        curr1 = solver1.doMove(curr1)
     }
-    cups.indexOf(1).let { idx ->
-        cups.subList(idx + 1, cups.size) + cups.subList(0, idx)
+    var cup = solver1.getCup(1)!!
+    (0 until 8).map {
+        cup = cup.next!!
+        cup.value
     }.also { println("Part one: ${it.joinToString("")}") }
 
-    val cups2 = initCupList(start)
-    var curr = start.first()
+    val solver2 = Solver(start, 1_000_000)
+    var curr2 = start.first() - '0'
     repeat(10_000_000) {
-        curr = doMove(cups2, curr)
+        curr2 = solver2.doMove(curr2)
     }
-    cups2[1]!!.let {
+    solver2.getCup(1)!!.let {
         it.next!!.value.toLong() * it.next!!.next!!.value.toLong()
     }.also { println("Part two: $it") }
 }
