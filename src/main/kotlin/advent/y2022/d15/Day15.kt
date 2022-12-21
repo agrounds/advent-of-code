@@ -44,18 +44,14 @@ fun parseSensor(line: String): Sensor {
     )
 }
 
-
-fun main() {
-    val sensors = (DATAPATH / "2022/day15.txt").useLines { lines ->
-        lines.mapTo(mutableListOf(), ::parseSensor)
-    }
+fun findNoBeaconsRanges(sensors: List<Sensor>, row: Int): List<Pair<Int, Int>> {
     val noBeaconsRanges = mutableListOf<Pair<Int, Int>>()
-    sensors.mapNotNull { it.noBeacons(2_000_000) }
+    sensors.mapNotNull { it.noBeacons(row) }
         .sortedBy { it.first }
         .forEach { range ->
             noBeaconsRanges.lastOrNull().let {
                 when {
-                    it == null || it.second < range.first ->
+                    it == null || it.second < range.first - 1 ->
                         noBeaconsRanges.add(range)
                     else -> {
                         noBeaconsRanges.removeLast()
@@ -64,6 +60,25 @@ fun main() {
                 }
             }
         }
-    noBeaconsRanges.sumOf { it.second - it.first + 1 }
+    return noBeaconsRanges
+}
+
+
+fun main() {
+    val sensors = (DATAPATH / "2022/day15.txt").useLines { lines ->
+        lines.mapTo(mutableListOf(), ::parseSensor)
+    }
+    val knownBeacons = sensors.map { it.bx to it.by }.toSet()
+    findNoBeaconsRanges(sensors, 2_000_000).sumOf { it.second - it.first + 1 }
         .also { println("Part one: $it") }
+    for (row in 0..4_000_000) {
+        findNoBeaconsRanges(sensors, row).forEach { range ->
+            if (range.second in 1 until 4_000_000) {
+                val beacon = range.second + 1 to row
+                if (beacon !in knownBeacons) {
+                    println("Part two: ${beacon.first.toLong() * 4_000_000 + beacon.second.toLong()}")
+                }
+            }
+        }
+    }
 }
