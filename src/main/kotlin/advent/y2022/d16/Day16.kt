@@ -106,10 +106,11 @@ class Solver(valves: List<Valve>, private val time: Int) {
         }
     }
 
-    fun findMaxFlow(partOne: Boolean): Int {
-        if (partOne) return maxFlows.values.maxOrNull()!!
-        else throw NotImplementedError()
-    }
+    fun findMaxFlow(partOne: Boolean): Int =
+        if (partOne)  maxFlows.values.maxOrNull()!!
+        else maxFlows.maxOf { (openValves, flow) ->
+            flow + (maxFlows.filterKeys { it and openValves == 0 }.values.maxOrNull() ?: 0)
+        }
 }
 
 
@@ -119,6 +120,7 @@ fun main() {
             .map(::parseLine)
     }
     Solver(valves, 30)
-        .also { println("Part one: ${it.findMaxFlow(true)}")}
-
+        .also { println("Part one: ${it.findMaxFlow(true)}") }
+    Solver(valves, 26)
+        .also { println("Part two: ${it.findMaxFlow(false)}") }
 }
