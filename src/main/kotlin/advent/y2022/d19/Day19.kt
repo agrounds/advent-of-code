@@ -126,5 +126,9 @@ fun main() {
     }
         .sum()
         .also { println("Part one: $it") }
-
+    blueprints.take(3)
+        .fold(1) { product, blueprint ->
+            product * maxGeodes(blueprint, 32)
+        }
+        .also { println("Part two: $it") }
 }
