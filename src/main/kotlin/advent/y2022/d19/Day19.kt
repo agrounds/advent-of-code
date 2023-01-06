@@ -1,7 +1,10 @@
 package advent.y2022.d19
 
 import advent.DATAPATH
-import advent.y2022.d19.Resource.*
+import advent.y2022.d19.Resource.CLAY
+import advent.y2022.d19.Resource.GEODE
+import advent.y2022.d19.Resource.OBSIDIAN
+import advent.y2022.d19.Resource.ORE
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -25,6 +28,12 @@ data class ResourceAmount(val ore: Int = 0, val clay: Int = 0, val obsidian: Int
         obsidian - other.obsidian,
         geode - other.geode,
     )
+    operator fun get(resourceType: Resource) = when (resourceType) {
+        ORE -> ore
+        CLAY -> clay
+        OBSIDIAN -> obsidian
+        GEODE -> geode
+    }
 
     fun isGeq(other: ResourceAmount): Boolean =
         ore >= other.ore &&
@@ -50,26 +59,57 @@ fun parseBlueprint(line: String): Blueprint {
     )
 }
 
+data class State(val resources: ResourceAmount, val robots: ResourceAmount, val timeLeft: Int)
+
 fun maxGeodes(blueprint: Blueprint, timeLimit: Int): Int {
+    var maxSpend = ResourceAmount()
+    blueprint.values.forEach {
+        maxSpend = ResourceAmount(
+            maxOf(maxSpend.ore, it.ore),
+            maxOf(maxSpend.clay, it.clay),
+            maxOf(maxSpend.obsidian, it.obsidian),
+        )
+    }
+
+    // map from a starting state to the max number of geodes that can be harvested from that state
+    // this number includes previously mined geodes, not just new ones
+    val dp = mutableMapOf<State, Int>()
+
     fun helper(resources: ResourceAmount, robots: ResourceAmount, timeLeft: Int): Int {
         if (timeLeft == 0) {
             return resources.geode
         }
 
-        // we can build one robot this minute if there are sufficient resources
+        // throw away resources we can't possibly use with the time left
+        fun canSpendMax(resourceType: Resource): Int =
+            maxSpend[resourceType] + (maxSpend[resourceType] - robots[resourceType]) * (timeLeft - 1)
+        val usefulResources = ResourceAmount(
+            ore = minOf(resources.ore, canSpendMax(ORE)),
+            clay = minOf(resources.clay, canSpendMax(CLAY)),
+            obsidian = minOf(resources.obsidian, canSpendMax(OBSIDIAN)),
+            resources.geode
+        )
+        val state = State(usefulResources, robots, timeLeft)
+        if (state in dp) return dp[state]!!
+
+        // we can build one robot this minute if there are sufficient resources and we do not already have
+        // the max number of useful robots (equal to maxSpend.resourceType)
         // try building each robot and recursively find max geodes after making that choice
         val buildRobotOptions = Resource.values().mapNotNull {
             val robotCost = blueprint[it]!!
-            if (resources.isGeq(robotCost)) {
-                helper(resources - robotCost + robots, robots.inc(it), timeLeft - 1)
+            if (usefulResources.isGeq(robotCost) && (it == GEODE || robots[it] < maxSpend[it])) {
+                helper(usefulResources - robotCost + robots, robots.inc(it), timeLeft - 1)
             } else {
                 null
             }
         }
         // we could also choose to not build a robot this minute
-        val dontBuildOption = helper(resources + robots, robots, timeLeft - 1)
+        val dontBuildOption = helper(usefulResources + robots, robots, timeLeft - 1)
 
         return maxOf(dontBuildOption, buildRobotOptions.maxOrNull() ?: 0)
+            .also {
+                dp[state] = it
+            }
     }
 
     // initial state: zero resources, one ore robot
@@ -78,7 +118,7 @@ fun maxGeodes(blueprint: Blueprint, timeLimit: Int): Int {
 
 
 fun main() {
-    val blueprints = (DATAPATH / "2022/day19-example.txt").useLines { lines ->
+    val blueprints = (DATAPATH / "2022/day19.txt").useLines { lines ->
         lines.map(::parseBlueprint).toList()
     }
     blueprints.mapIndexed { index, blueprint ->
