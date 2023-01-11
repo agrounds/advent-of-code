@@ -125,10 +125,10 @@ fun followInstructions2(map: List<String>, instructions: List<Instruction>): Int
                             0 to y.mod(sideLen)
                         }
                         y.floorDiv(sideLen) < nextY.floorDiv(sideLen) -> { // crossed bottom edge
-                            1 to (3 - x).mod(sideLen)
+                            1 to (sideLen - 1 - x).mod(sideLen)
                         }
                         x.floorDiv(sideLen) > nextX.floorDiv(sideLen) -> { // crossed left boundary
-                            2 to (3 - y).mod(sideLen)
+                            2 to (sideLen - 1 - y).mod(sideLen)
                         }
                         y.floorDiv(sideLen) > nextY.floorDiv(sideLen) -> { // crossed top edge
                             3 to x.mod(sideLen)
