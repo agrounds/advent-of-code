@@ -85,5 +85,5 @@ private fun findFaces(map: List<String>): List<MutableFace> {
 
 // side length of the cube
 // assumption: the cube has been cut to fit in a 3s x 4s rectangle, s = sideLen
-private val List<String>.sideLen
+val List<String>.sideLen
     get() = minOf(size, this.maxOf { it.length }) / 3
