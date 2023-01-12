@@ -13,7 +13,7 @@ import advent.w
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
-fun moveElves(startingPositions: Set<Point>): Int {
+fun moveElves(startingPositions: Set<Point>, partOne: Boolean): Int {
     var elves = startingPositions.toList()
     var elvesSet = startingPositions.toSet()
 
@@ -37,7 +37,8 @@ fun moveElves(startingPositions: Set<Point>): Int {
         else -> position
     }
 
-    repeat(10) {
+    var roundNum = 1
+    while (!partOne || roundNum <= 10) {
         val proposedPositions = mutableListOf<Point?>()
         val proposedCount = mutableMapOf<Point, Int>()
         elves.forEach { position ->
@@ -52,6 +53,10 @@ fun moveElves(startingPositions: Set<Point>): Int {
 
         directions.add(directions.removeFirst())
 
+        if (!partOne && proposedPositions.all { it == null }) {
+            return roundNum
+        }
+
         elves = List(elves.size) { i ->
             val next = proposedPositions[i]
             if (next != null && proposedCount[next] == 1) {
@@ -61,6 +66,7 @@ fun moveElves(startingPositions: Set<Point>): Int {
             }
         }
         elvesSet = elves.toSet()
+        roundNum++
     }
 
     val rectangle = (elves.maxOf { it.x } - elves.minOf { it.x } + 1) *
@@ -85,5 +91,6 @@ fun main() {
             line.mapIndexedNotNull { x, c -> if (c == '#') Point(x, y) else null }
         }.toSet()
     }
-    println("Part one: ${moveElves(elves)}")
+    println("Part one: ${moveElves(elves, true)}")
+    println("Part two: ${moveElves(elves, false)}")
 }
