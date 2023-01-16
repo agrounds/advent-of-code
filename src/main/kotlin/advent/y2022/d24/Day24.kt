@@ -39,7 +39,7 @@ class Solver(grid: List<String>) {
         time++
     }
 
-    // reversed = true indicates we're going from
+    // reversed = true indicates we're going from the end to the start
     fun goToGoal(reversed: Boolean) {
         val start = if (reversed) Point(width - 1, height) else Point(0, -1)
         val goal = if (reversed) Point(0, 0) else Point(width - 1, height - 1)
