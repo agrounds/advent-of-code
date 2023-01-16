@@ -49,14 +49,16 @@ class Solver(valves: List<Valve>, private val time: Int) {
     }
 
     private fun computeDistances(start: Valve): IntArray {
-        val ret = IntArray(nameToNumber.size)
+        val ret = IntArray(nameToNumber.size) { -1 }
         val queue = ArrayDeque(listOf(start to 0))
         val visited = mutableSetOf<String>()
         while (queue.isNotEmpty()) {
             val (valve, dist) = queue.removeFirst()
             visited.add(valve.name)
             nameToNumber[valve.name]?.let { n ->
-                ret[n] = dist
+                ret[n] =
+                    if (ret[n] == -1) dist
+                    else minOf(ret[n], dist)
             }
             valve.adjacentValves
                 .filterNot { it in visited }
@@ -75,7 +77,10 @@ class Solver(valves: List<Valve>, private val time: Int) {
 
     private fun computeMaxFlows() {
         // openValves is a bitmap, same as maxFlows' keys
-        data class State(val position: Int, val openValves: Int, val timeRemaining: Int, val flowSoFar: Int)
+        data class State(val position: Int, val openValves: Int, val timeRemaining: Int, val flowSoFar: Int) {
+            val openValvesList = distances.indices.filter { openValves and (1 shl it) != 0 }
+            override fun toString() = "State(position=$position, openValves=$openValvesList, timeRemaining=$timeRemaining, flowSoFar=$flowSoFar)"
+        }
         fun State.goTo(newPosition: Int): State {
             val actionTime = distances[position][newPosition] + 1
             val newOpenValves = openValves or (1 shl newPosition)
