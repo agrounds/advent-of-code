@@ -50,9 +50,11 @@ class Solver(grid: List<String>) {
 
             possiblePositions = mutableSetOf<Point>().apply {
                 possiblePositions.forEach { position ->
+                    // one option is to wait where we are
                     if (position !in blizzards) {
                         add(position)
                     }
+                    // other options are to move up, down, left or right
                     Direction.values().forEach { dir ->
                         val nextPosition = position + dir.asPoint()
                         if (
