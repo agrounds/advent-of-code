@@ -27,7 +27,7 @@ fun Direction.asPoint(): Point = when (this) {
     Direction.SW -> Point(0, 1)
 }
 
-fun countFlippedTiles(tileIdentifiers: List<List<Direction>>): Int {
+fun initialBlackTiles(tileIdentifiers: List<List<Direction>>): Set<Point> {
     val flippedSet = mutableSetOf<Point>()
     tileIdentifiers.forEach { directions ->
         val tile = directions.fold(Point(0, 0)) { point, direction ->
@@ -41,7 +41,41 @@ fun countFlippedTiles(tileIdentifiers: List<List<Direction>>): Int {
         }
     }
 
-    return flippedSet.size
+    return flippedSet
+}
+
+// given the current black tiles, return the set of black tiles after tiles are
+// flipped according to rules in part two
+fun flipTiles(blackTiles: Set<Point>): Set<Point> {
+    val tilesToFlip = mutableSetOf<Point>()
+
+    // find matching black tiles
+    blackTiles.forEach { tile ->
+        val adjacentBlackTiles = Direction.values()
+            .map { tile + it.asPoint() }
+            .count { it in blackTiles }
+        if (adjacentBlackTiles !in setOf(1, 2)) {
+            tilesToFlip.add(tile)
+        }
+    }
+
+    // find matching white tiles
+    blackTiles.forEach { tile ->
+        Direction.values()
+            .map { tile + it.asPoint() }
+            .filter { it !in blackTiles }
+            .forEach { whiteTile ->
+                val adjacentBlackTiles = Direction.values()
+                    .map { whiteTile + it.asPoint() }
+                    .count { it in blackTiles }
+                if (adjacentBlackTiles == 2) {
+                    tilesToFlip.add(whiteTile)
+                }
+            }
+    }
+
+    // return symmetric difference
+    return (blackTiles + tilesToFlip) - (blackTiles.intersect(tilesToFlip))
 }
 
 
@@ -74,5 +108,10 @@ fun main() {
             list.toList()  // make it immutable
         }
     }
-    println("Part one: ${countFlippedTiles(tileIdentifiers)}")
+    var blackTiles = initialBlackTiles(tileIdentifiers)
+        .also { println("Part one: ${it.size}") }
+    repeat(100) {
+        blackTiles = flipTiles(blackTiles)
+    }
+    println("Part two: ${blackTiles.size}")
 }
