@@ -72,7 +72,9 @@ fun flipTiles(blackTiles: Set<Point>): Set<Point> {
                     .adjacents()
                     .count { it in blackTiles }
                     .takeIf { it == 2 }
-                    ?.also { tilesToFlip.add(whiteTile) }
+                    ?.also {
+                        tilesToFlip.add(whiteTile)
+                    }
             }
     }
 
