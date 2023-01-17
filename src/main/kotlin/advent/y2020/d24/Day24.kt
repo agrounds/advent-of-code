@@ -27,6 +27,9 @@ fun Direction.asPoint(): Point = when (this) {
     Direction.SW -> Point(0, 1)
 }
 
+fun Point.adjacents(): List<Point> = Direction.values().map { this + it.asPoint() }
+
+
 fun initialBlackTiles(tileIdentifiers: List<List<Direction>>): Set<Point> {
     val flippedSet = mutableSetOf<Point>()
     tileIdentifiers.forEach { directions ->
@@ -51,26 +54,25 @@ fun flipTiles(blackTiles: Set<Point>): Set<Point> {
 
     // find matching black tiles
     blackTiles.forEach { tile ->
-        val adjacentBlackTiles = Direction.values()
-            .map { tile + it.asPoint() }
+        tile
+            .adjacents()
             .count { it in blackTiles }
-        if (adjacentBlackTiles !in setOf(1, 2)) {
-            tilesToFlip.add(tile)
-        }
+            .takeIf { it !in setOf(1, 2) }
+            ?.also {
+                tilesToFlip.add(tile)
+            }
     }
 
     // find matching white tiles
     blackTiles.forEach { tile ->
-        Direction.values()
-            .map { tile + it.asPoint() }
+        tile.adjacents()
             .filter { it !in blackTiles }
             .forEach { whiteTile ->
-                val adjacentBlackTiles = Direction.values()
-                    .map { whiteTile + it.asPoint() }
+                whiteTile
+                    .adjacents()
                     .count { it in blackTiles }
-                if (adjacentBlackTiles == 2) {
-                    tilesToFlip.add(whiteTile)
-                }
+                    .takeIf { it == 2 }
+                    ?.also { tilesToFlip.add(whiteTile) }
             }
     }
 
