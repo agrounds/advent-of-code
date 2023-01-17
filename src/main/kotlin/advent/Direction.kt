@@ -1,6 +1,6 @@
 package advent
 
-enum class Direction() {
+enum class Direction {
     UP,
     DOWN,
     LEFT,

@@ -2,6 +2,7 @@ package advent
 
 data class Point(val x: Int, val y: Int) {
     operator fun plus(other: Point) = Point(x + other.x, y + other.y)
+    operator fun times(factor: Int) = Point(x * factor, y * factor)
 }
 // north south, east, west, and diagonals
 val Point.n get() = Point(x, y - 1)
@@ -12,6 +13,10 @@ val Point.nw get() = Point(x - 1, y - 1)
 val Point.ne get() = Point(x + 1, y - 1)
 val Point.sw get() = Point(x - 1, y + 1)
 val Point.se get() = Point(x + 1, y + 1)
+
+fun Iterable<Point>.sum(): Point = this.fold(Point(0, 0)) { sum, point ->
+    sum + point
+}
 
 data class Point3(val x: Int, val y: Int, val z: Int) {
     operator fun plus(other: Point3) = Point3(x + other.x, y + other.y, z + other.z)
