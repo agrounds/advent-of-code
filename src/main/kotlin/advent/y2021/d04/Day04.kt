@@ -7,7 +7,8 @@ import kotlin.io.path.useLines
 
 typealias Board = MutableList<List<Int>>
 
-fun findWinningBoard(nums: List<Int>, boards: List<Board>): Int {
+// if winningBoard = false, we want to find the board that wins last
+fun scoreBoard(nums: List<Int>, boards: List<Board>, winningBoard: Boolean): Int {
     val markers = boards.map { board ->
         board.map { row ->
             row.map { false }.toMutableList()
@@ -19,7 +20,9 @@ fun findWinningBoard(nums: List<Int>, boards: List<Board>): Int {
             boardMarkers.indices.any { x -> boardMarkers.all { it[x] } }  // won along a column
 
     var i = 0
-    while (markers.none(::isWinner)) {
+    var lastWinner: Int? = null
+    val winners = mutableSetOf<Int>()
+    while ((winningBoard && winners.isEmpty()) || (!winningBoard && winners.size < boards.size)) {
         val num = nums[i]
         boards.forEachIndexed { boardNum, board ->
             board.forEachIndexed { y, row ->
@@ -29,13 +32,16 @@ fun findWinningBoard(nums: List<Int>, boards: List<Board>): Int {
                     }
                 }
             }
+            if (boardNum !in winners && isWinner(markers[boardNum])) {
+                winners.add(boardNum)
+                lastWinner = boardNum
+            }
         }
         i++
     }
-    val winner = markers.indexOfFirst(::isWinner)
-    val unmarkedSum = boards[winner].flatMapIndexed { y, row ->
+    val unmarkedSum = boards[lastWinner!!].flatMapIndexed { y, row ->
         row.filterIndexed { x, _ ->
-            !markers[winner][y][x]
+            !markers[lastWinner!!][y][x]
         }
     }.sum()
     return unmarkedSum * nums[i-1]
@@ -61,5 +67,6 @@ fun main() {
             }
             nums to boards
         }
-    println("Part one: ${findWinningBoard(nums, boards)}")
+    println("Part one: ${scoreBoard(nums, boards, true)}")
+    println("Part two: ${scoreBoard(nums, boards, false)}")
 }
