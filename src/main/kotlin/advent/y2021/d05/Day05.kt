@@ -6,28 +6,37 @@ import kotlin.io.path.div
 import kotlin.io.path.useLines
 
 
-fun findOverlaps(ventLines: List<Pair<Point, Point>>): Int {
+fun range(from: Point, to: Point): List<Point> {
+    val xStep = when {
+        from.x < to.x -> 1
+        from.x > to.x -> -1
+        else -> 0
+    }
+    val yStep = when {
+        from.y < to.y -> 1
+        from.y > to.y -> -1
+        else -> 0
+    }
+
+    return mutableListOf<Point>().apply {
+        var p = from
+        add(p)
+        while (p != to) {
+            p += Point(xStep, yStep)
+            add(p)
+        }
+    }
+}
+
+fun findOverlaps(ventLines: List<Pair<Point, Point>>, includeDiagonals: Boolean): Int {
     val ventPoints = mutableSetOf<Point>()
     val overlapPoints = mutableSetOf<Point>()
 
     ventLines.forEach { (from, to) ->
-        when {
-            from.x == to.x -> {
-                val x = from.x
-                val (minY, maxY) = listOf(from.y, to.y).sorted()
-                (minY..maxY).forEach { y ->
-                    if (!ventPoints.add(Point(x, y))) {
-                        overlapPoints.add(Point(x, y))
-                    }
-                }
-            }
-            from.y == to.y -> {
-                val y = from.y
-                val (minX, maxX) = listOf(from.x, to.x).sorted()
-                (minX..maxX).forEach { x ->
-                    if (!ventPoints.add(Point(x, y))) {
-                        overlapPoints.add(Point(x, y))
-                    }
+        if (includeDiagonals || from.x == to.x || from.y == to.y) {
+            range(from, to).forEach { point ->
+                if (!ventPoints.add(point)) {
+                    overlapPoints.add(point)
                 }
             }
         }
@@ -44,5 +53,6 @@ fun main() {
             first.toPoint() to second.toPoint()
         }
     }
-    println("Part one: ${findOverlaps(ventLines)}")
+    println("Part one: ${findOverlaps(ventLines, false)}")
+    println("Part two: ${findOverlaps(ventLines, true)}")
 }
