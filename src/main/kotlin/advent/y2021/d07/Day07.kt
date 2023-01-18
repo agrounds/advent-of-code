@@ -15,9 +15,10 @@ fun minFuelOne(positions: List<Int>): Int {
 
 fun minFuelTwo(positions: List<Int>): Int {
     // hunch: the best position to move to is the mean of the positions
+    // in fact, the mean is _slightly_ wrong, see https://www.reddit.com/r/adventofcode/comments/xz2ebs/more_on_2021_day_7_part_2/
+    // but the correct position is guaranteed to be within 1 of the rounded mean
     val mean = positions.sum() / positions.size
-    // consider mean + 1 in case we rounded down a lot
-    return listOf(mean, mean + 1).minOf { target ->
+    return listOf(mean - 1, mean, mean + 1).minOf { target ->
         positions.sumOf { position ->
             val d = abs(position - target)
             // formula for triangle number
