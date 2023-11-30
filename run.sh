@@ -9,28 +9,33 @@ verbose=
 year=
 day=
 
+# parse cli args
 for arg in "$@"; do
   if [ "$arg" = "-v" ]; then
     verbose=true
   elif [ -z "$year" ]; then
     year="$arg"
-    if [ "${#year}" -ne 4 ]; then
-      usage
-    fi
   elif [ -z "$day" ]; then
     day="$arg"
-    # add leading zero if needed
-    if [ "${#day}" -eq 1 ]; then
-      day="0$day"
-    fi
-    if [ "${#day}" -ne 2 ]; then
-      usage
-    fi
   else
     usage
   fi
 done
 
+# add leading zero if needed
+if [ "${#day}" -eq 1 ]; then
+  day="0$day"
+fi
+
+# validate inputs
+if (echo "$year" | grep -Evq '^\d{4}$'); then
+  usage
+fi
+if (echo "$day" | grep -Evq '^\d{2}$'); then
+  usage
+fi
+
+# invoke appropriate main class
 if [ -z "$verbose" ]; then
   mvn exec:java -q "-Dexec.mainClass=com.groundsfam.advent.y${year}.d${day}.Day${day}Kt"
 else
