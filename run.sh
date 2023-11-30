@@ -1,5 +1,10 @@
 #!/usr/bin/env sh
 
+usage() {
+  echo "Usage: $0 [-v] year day"
+  exit 1
+}
+
 verbose=
 year=
 day=
@@ -9,11 +14,20 @@ for arg in "$@"; do
     verbose=true
   elif [ -z "$year" ]; then
     year="$arg"
-  elif [ -z "$month" ]; then
+    if [ "${#year}" -ne 4 ]; then
+      usage
+    fi
+  elif [ -z "$day" ]; then
     day="$arg"
+    # add leading zero if needed
+    if [ "${#day}" -eq 1 ]; then
+      day="0$day"
+    fi
+    if [ "${#day}" -ne 2 ]; then
+      usage
+    fi
   else
-  echo "Usage: $0 [-v] year day"
-  exit 1
+    usage
   fi
 done
 
