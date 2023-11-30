@@ -7,7 +7,7 @@ Solutions to [Advent of Code](https://adventofcode.com/) problems for various ye
 To run the solutions in this project, you'll need to have these installed:
 
 - a JDK (I've tested this with JDK 17)
-- `maven`
+- maven
 
 You'll also need to have your puzzle input saved to your `~/data/advent-of-code/` directory, formatted by year and day.
 For example, your input to 2022, day 1 should be saved to `~/data/advent-of-code/2022/day01.txt`. You can download
