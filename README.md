@@ -20,7 +20,7 @@ Since this is all written in Kotlin, it's easy to run it from JetBrains's Intell
 provided `run.sh` script like so:
 
 ```shell
-mvn clean compile  # needs to be run once, and again after any code changes
+mvn compile  # needs to be run once, and again after any code changes
 ./run.sh 2023 1  # runs the code for year 2023, day 1's puzzle
 ```
 
