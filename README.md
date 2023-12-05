@@ -21,7 +21,7 @@ provided `run.sh` script like so:
 
 ```shell
 mvn clean compile  # needs to be run once, and again after any code changes
-./run.sh 2023 1  # runs the code for year 2022, day 1's puzzle
+./run.sh 2023 1  # runs the code for year 2023, day 1's puzzle
 ```
 
 By default, maven's output is not printed, which may obfuscate errors. To see full output including exceptions and
