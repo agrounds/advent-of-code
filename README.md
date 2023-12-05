@@ -10,7 +10,7 @@ To run the solutions in this project, you'll need to have these installed:
 - maven
 
 You'll also need to have your puzzle input saved to your `~/data/advent-of-code/` directory, formatted by year and day.
-For example, your input to 2022, day 1 should be saved to `~/data/advent-of-code/2022/day01.txt`. You can download
+For example, your input to 2023, day 1 should be saved to `~/data/advent-of-code/2023/day01.txt`. You can download
 your puzzle input from [adventofcode.com](https://adventofcode.com) after logging in and navigating to a particular
 puzzle.
 
@@ -20,12 +20,13 @@ Since this is all written in Kotlin, it's easy to run it from JetBrains's Intell
 provided `run.sh` script like so:
 
 ```shell
-./run.sh 2022 1  # runs the code for year 2022, day 1's puzzle
+mvn clean compile  # needs to be run once, and again after any code changes
+./run.sh 2023 1  # runs the code for year 2022, day 1's puzzle
 ```
 
 By default, maven's output is not printed, which may obfuscate errors. To see full output including exceptions and
 their stack traces, use the `-v` flag:
 
 ```shell
-./run.sh -v 2022 1
+./run.sh -v 2023 1
 ```
