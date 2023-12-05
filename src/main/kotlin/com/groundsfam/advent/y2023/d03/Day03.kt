@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2023.d03
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -76,7 +77,7 @@ fun gearRatios(lines: List<String>): List<Long> {
 }
 
 
-fun main() {
+fun main() = timed {
     val lines = (DATAPATH / "2023/day03.txt").useLines { it.toList() }
     partNumbers(lines)
         .sum()

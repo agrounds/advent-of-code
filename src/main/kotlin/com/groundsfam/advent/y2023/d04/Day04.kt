@@ -2,6 +2,7 @@ package com.groundsfam.advent.y2023.d04
 
 import com.groundsfam.advent.DATAPATH
 import com.groundsfam.advent.pow
+import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 import kotlin.math.min
@@ -32,7 +33,7 @@ fun partTwo(cards: List<Card>): Long {
 }
 
 
-fun main() {
+fun main() = timed {
     (DATAPATH / "2023/day04.txt").useLines { lines ->
         lines.mapTo(mutableListOf()) { line ->
             val (winners, yourNumbers) = line.split("""\s+\|\s+""".toRegex(), limit = 2)

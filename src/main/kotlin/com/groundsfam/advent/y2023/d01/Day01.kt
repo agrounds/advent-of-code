@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2023.d01
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -34,7 +35,7 @@ fun getCalibration2(line: String): Int {
     return digits.first() * 10 + digits.last()
 }
 
-fun main() {
+fun main() = timed {
     val lines = (DATAPATH / "2023/day01.txt").useLines {
         it.toList()
     }

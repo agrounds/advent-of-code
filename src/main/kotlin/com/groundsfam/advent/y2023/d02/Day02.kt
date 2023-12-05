@@ -2,6 +2,7 @@ package com.groundsfam.advent.y2023.d02
 
 import com.groundsfam.advent.DATAPATH
 import com.groundsfam.advent.Tuple3
+import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -17,7 +18,7 @@ fun parseGame(line: String): List<Tuple3<Int, Int, Int>> {
     }
 }
 
-fun main() {
+fun main() = timed {
     val games = (DATAPATH / "2023/day02.txt").useLines { lines ->
         lines.toList().map(::parseGame)
     }
