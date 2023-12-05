@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2022.d08
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.timed
 import java.util.ArrayDeque
 import java.util.Deque
 import kotlin.io.path.div
@@ -113,7 +114,7 @@ fun maxScenicScore(grid: List<List<Int>>): Int {
 }
 
 
-fun main() {
+fun main() = timed {
     val grid = (DATAPATH / "2022/day08.txt").useLines { lines ->
         lines.toList().map { line ->
             line.map { it - '0' }

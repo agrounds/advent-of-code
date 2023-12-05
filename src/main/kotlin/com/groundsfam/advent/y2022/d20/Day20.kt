@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2022.d20
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -71,7 +72,7 @@ fun mix(nums: List<Int>, times: Int, key: Int): List<Int> {
     return toList(linkedList, zeroIdx!!)
 }
 
-fun main() {
+fun main() = timed {
     val nums = (DATAPATH / "2022/day20.txt")
         .useLines { it.toList() }
         .map { it.toInt() }

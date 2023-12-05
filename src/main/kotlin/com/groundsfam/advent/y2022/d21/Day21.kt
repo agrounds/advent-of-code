@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2022.d21
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 import kotlin.math.exp
@@ -131,7 +132,7 @@ fun partTwo(expressions: List<Expression>): Long {
 }
 
 
-fun main() {
+fun main() = timed {
     val expressions = (DATAPATH / "2022/day21.txt").useLines { lines ->
         lines.toList().map(::parseExpression)
     }

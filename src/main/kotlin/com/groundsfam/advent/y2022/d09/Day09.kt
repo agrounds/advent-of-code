@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2022.d09
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 import kotlin.math.abs
@@ -46,7 +47,7 @@ fun trackTail(moves: List<Move>, numKnots: Int): Int {
 }
 
 
-fun main() {
+fun main() = timed {
     val moves = (DATAPATH / "2022/day09.txt").useLines { lines ->
         lines.toList().map { line ->
             Move(line.first(), line.substring(2).toInt())

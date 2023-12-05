@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2022.d10
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.timed
 import com.groundsfam.advent.y2015.d07.MAX_SIGNAL
 import kotlin.io.path.div
 import kotlin.io.path.useLines
@@ -72,7 +73,7 @@ fun simulateCRT(instructions: List<Instruction>): String {
 }
 
 
-fun main() {
+fun main() = timed {
     val instructions = (DATAPATH / "2022/day10.txt").useLines { lines ->
         lines.toList().map { line ->
             val parts = line.split(" ")

@@ -1,10 +1,6 @@
 package com.groundsfam.advent.y2022.d24
 
-import com.groundsfam.advent.DATAPATH
-import com.groundsfam.advent.Direction
-import com.groundsfam.advent.Point
-import com.groundsfam.advent.asPoint
-import com.groundsfam.advent.toDirection
+import com.groundsfam.advent.*
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -74,7 +70,7 @@ class Solver(grid: List<String>) {
 }
 
 
-fun main() {
+fun main() = timed {
     val solver = (DATAPATH / "2022/day24.txt").useLines { it.toList() }
         .let { it.subList(1, it.size - 1) }  // remove first and last lines
         .map { line ->

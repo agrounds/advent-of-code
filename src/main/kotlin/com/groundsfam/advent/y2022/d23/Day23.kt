@@ -1,15 +1,6 @@
 package com.groundsfam.advent.y2022.d23
 
-import com.groundsfam.advent.DATAPATH
-import com.groundsfam.advent.Point
-import com.groundsfam.advent.e
-import com.groundsfam.advent.n
-import com.groundsfam.advent.ne
-import com.groundsfam.advent.nw
-import com.groundsfam.advent.s
-import com.groundsfam.advent.se
-import com.groundsfam.advent.sw
-import com.groundsfam.advent.w
+import com.groundsfam.advent.*
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -84,7 +75,7 @@ fun drawElves(elves: Set<Point>) =
     }
 
 
-fun main() {
+fun main() = timed {
     // set of points the elves are standing at
     val elves = (DATAPATH / "2022/day23.txt").useLines { lines ->
         lines.toList().flatMapIndexed { y, line ->

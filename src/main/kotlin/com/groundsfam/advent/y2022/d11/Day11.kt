@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2022.d11
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -33,7 +34,7 @@ fun doRound(monkeys: List<Monkey>) {
 }
 
 
-fun main() {
+fun main() = timed {
     val (monkeysOne, monkeysTwo) = (DATAPATH / "2022/day11.txt").useLines {
         it.toList()
     }.let { lines ->

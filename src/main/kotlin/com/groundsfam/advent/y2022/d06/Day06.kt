@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2022.d06
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -17,7 +18,7 @@ fun seekPacketStart(buffer: String, distinctLength: Int): Int? {
 
 
 
-fun main() {
+fun main() = timed {
     (DATAPATH / "2022/day06.txt").useLines { lines ->
         lines.first()
     }

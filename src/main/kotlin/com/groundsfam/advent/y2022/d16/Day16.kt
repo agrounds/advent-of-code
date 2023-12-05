@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2022.d16
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -119,7 +120,7 @@ class Solver(valves: List<Valve>, private val time: Int) {
 }
 
 
-fun main() {
+fun main() = timed {
     val valves = (DATAPATH / "2022/day16.txt").useLines { lines ->
         lines.toList()
             .map(::parseLine)

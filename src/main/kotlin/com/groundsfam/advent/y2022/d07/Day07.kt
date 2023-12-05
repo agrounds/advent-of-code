@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2022.d07
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -71,7 +72,7 @@ fun findDirectoryToDelete(fileTree: Directory, spaceToFree: Int): Int? =
 
 
 
-fun main() {
+fun main() = timed {
     val fileTree = (DATAPATH / "2022/day07.txt").useLines { lines ->
         parseCommands(lines)
     }

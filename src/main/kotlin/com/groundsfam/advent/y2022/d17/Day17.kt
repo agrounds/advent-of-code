@@ -2,6 +2,7 @@ package com.groundsfam.advent.y2022.d17
 
 import com.groundsfam.advent.DATAPATH
 import com.groundsfam.advent.Point
+import com.groundsfam.advent.timed
 import java.util.LinkedList
 import kotlin.io.path.div
 import kotlin.io.path.useLines
@@ -129,7 +130,7 @@ fun drawChamber(chamber: List<BooleanArray>): String =
 
 
 
-fun main() {
+fun main() = timed {
     val directions = (DATAPATH / "2022/day17.txt").useLines { lines ->
         lines.first()
     }

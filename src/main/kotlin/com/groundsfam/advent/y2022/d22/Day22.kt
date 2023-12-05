@@ -2,6 +2,7 @@ package com.groundsfam.advent.y2022.d22
 
 import com.groundsfam.advent.DATAPATH
 import com.groundsfam.advent.Point
+import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -170,7 +171,7 @@ fun followInstructions2(map: List<String>, instructions: List<Instruction>): Int
 }
 
 
-fun main() {
+fun main() = timed {
     val (map, instructions) = (DATAPATH / "2022/day22.txt").useLines { it.toList() }.let { lines ->
         lines.take(lines.size - 2) to parseInstructions(lines.last())
     }

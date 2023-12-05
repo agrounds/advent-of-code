@@ -1,5 +1,6 @@
 package com.groundsfam.advent.y2022.d05
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.timed
 import java.util.Stack
 import kotlin.io.path.div
 import kotlin.io.path.useLines
@@ -37,7 +38,7 @@ fun performMovePartTwo(move: Move) {
     buffer.reversed().onEach(stacksPartTwo[to]::push)
 }
 
-fun main() {
+fun main() = timed {
     // There are exactly 9 stacks, labeled 1 through 9. I have edited the original input file to remove
     // brackets and the stack labels. Now each character is the name of that box, if present. The ith
     // stack's box is at character i-1. There is a blank line separating the original stack configuration from

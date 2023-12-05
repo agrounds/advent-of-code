@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2022.d25
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -47,7 +48,7 @@ fun decimalToSnafu(n: Long): String {
 }
 
 
-fun main() {
+fun main() = timed {
     (DATAPATH / "2022/day25.txt").useLines { lines ->
         lines
             .map(::snafuToDecimal)

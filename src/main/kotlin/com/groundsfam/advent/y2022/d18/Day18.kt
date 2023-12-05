@@ -2,6 +2,7 @@ package com.groundsfam.advent.y2022.d18
 
 import com.groundsfam.advent.DATAPATH
 import com.groundsfam.advent.adjacents
+import com.groundsfam.advent.timed
 import com.groundsfam.advent.Point3 as Point
 import kotlin.io.path.div
 import kotlin.io.path.useLines
@@ -64,7 +65,7 @@ fun surfaceArea2(points: List<Point>): Int {
 }
 
 
-fun main() {
+fun main() = timed {
     val points = (DATAPATH / "2022/day18.txt").useLines { lines ->
         lines.toList().map { line ->
             val (x, y, z) = line.split(",").map { it.toInt() }

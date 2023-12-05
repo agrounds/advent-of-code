@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2022.d02
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -46,7 +47,7 @@ fun scorePartTwo(opponentChoice: String, result: String): Int {
 }
 
 
-fun main() {
+fun main() = timed {
     val rounds: List<Pair<String, String>> = (DATAPATH / "2022/day02.txt").useLines { lines ->
         lines.toList().map { line ->
             val (a, b) = line.split(" ")

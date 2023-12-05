@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2022.d14
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -82,7 +83,7 @@ class Solver(input: Sequence<String>) {
 
 
 
-fun main() {
+fun main() = timed {
     val solver = (DATAPATH / "2022/day14.txt").useLines { Solver(it) }
     solver.simulateFallingSand(Point(500, 0), true)
         .also { println("Part one: $it") }

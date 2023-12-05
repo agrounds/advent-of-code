@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2022.d12
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -103,7 +104,7 @@ class PartTwoSolver(private val grid: Grid, end: Point) {
 }
 
 
-fun main() {
+fun main() = timed {
     var start = 0 to 0
     var end = 0 to 0
 

@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2022.d19
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.timed
 import com.groundsfam.advent.y2022.d19.Resource.CLAY
 import com.groundsfam.advent.y2022.d19.Resource.GEODE
 import com.groundsfam.advent.y2022.d19.Resource.OBSIDIAN
@@ -117,7 +118,7 @@ fun maxGeodes(blueprint: Blueprint, timeLimit: Int): Int {
 }
 
 
-fun main() {
+fun main() = timed {
     val blueprints = (DATAPATH / "2022/day19.txt").useLines { lines ->
         lines.map(::parseBlueprint).toList()
     }

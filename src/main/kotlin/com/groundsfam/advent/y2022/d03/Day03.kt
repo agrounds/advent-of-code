@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2022.d03
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -30,7 +31,7 @@ fun badgeItem(group: List<String>): Char =
         .let { it.toList()[0] }
 
 
-fun main() {
+fun main() = timed {
     val rucksacks = (DATAPATH / "2022/day03.txt").useLines { lines ->
         lines.toList()
     }

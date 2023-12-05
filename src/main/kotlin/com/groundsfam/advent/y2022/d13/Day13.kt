@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2022.d13
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.timed
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
@@ -53,7 +54,7 @@ val dividerPackets = listOf(2, 6).map {
 }
 
 
-fun main() {
+fun main() = timed {
     val pairs = (DATAPATH / "2022/day13.txt").useLines { lines ->
         val linesList = lines.toList()
         (linesList.indices step 3).map { i ->
