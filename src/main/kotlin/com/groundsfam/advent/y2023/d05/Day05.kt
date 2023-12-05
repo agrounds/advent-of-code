@@ -4,7 +4,6 @@ import com.groundsfam.advent.DATAPATH
 import com.groundsfam.advent.except
 import com.groundsfam.advent.rangeIntersect
 import com.groundsfam.advent.timed
-import org.apache.commons.lang3.time.StopWatch
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
