@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2023.d07
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.readLines
 
@@ -85,7 +86,7 @@ fun Hand.comparePartTwo(that: Hand): Int =
         .first { this.cards[it] != that.cards[it] }
         .let { cardOrderPartTwo.indexOf(this.cards[it]) - cardOrderPartTwo.indexOf(that.cards[it]) }
 
-fun main() {
+fun main() = timed {
     val hands = (DATAPATH / "2023/day07.txt").readLines()
         .map { line ->
             line.split(" ")
