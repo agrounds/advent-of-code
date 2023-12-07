@@ -73,7 +73,11 @@ fun Hand.typePartTwo(): Int {
         return 7
     }
     val jokers = this.cards.filter { it == 'J' }.length
-    val counts = this.cards.filterNot { it == 'J' }.groupBy { it }.mapTo(mutableListOf()) { (_, l) -> l.size }
+    val counts = this.cards
+        .filterNot { it == 'J' }
+        .groupBy { it }
+        .mapTo(mutableListOf()) { (_, l) -> l.size }
+    // add jokers to whichever count is highest to make best hand
     val maxIdx = counts.indexOf(counts.max())
     counts[maxIdx] += jokers
     return counts.toType()
@@ -86,6 +90,13 @@ fun Hand.comparePartTwo(that: Hand): Int =
         .first { this.cards[it] != that.cards[it] }
         .let { cardOrderPartTwo.indexOf(this.cards[it]) - cardOrderPartTwo.indexOf(that.cards[it]) }
 
+fun List<Hand>.totalWinnings(): Long =
+    this
+        .mapIndexed { i, hand ->
+            hand.bid * (i + 1)
+        }
+        .sum()
+
 fun main() = timed {
     val hands = (DATAPATH / "2023/day07.txt").readLines()
         .map { line ->
@@ -95,15 +106,9 @@ fun main() = timed {
                 }
         }
     hands.sortedWith { a, b -> a.comparePartOne(b) }
-        .mapIndexed { i, hand ->
-            hand.bid * (i + 1)
-        }
-        .sum()
+        .totalWinnings()
         .also { println("Part one $it") }
     hands.sortedWith { a, b -> a.comparePartTwo(b) }
-        .mapIndexed { i, hand ->
-            hand.bid * (i + 1)
-        }
-        .sum()
+        .totalWinnings()
         .also { println("Part two $it") }
 }
