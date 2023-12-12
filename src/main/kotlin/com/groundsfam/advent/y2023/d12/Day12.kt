@@ -51,29 +51,25 @@ fun springArrangements(row: String, brokenGroupLengths: List<Int>): Long {
         fun computeWorking(): Long =
             compute(i + 1, j)
 
-        fun computeBroken(): Long =
+        fun computeBroken(): Long {
             if (j == brokenGroupLengths.size) {
-                0
-            } else {
-                // index of the end of the group, exclusive
-                val endGroupIdx = i + brokenGroupLengths[j]
-
-                when {
-                    !brokenGroupPossible(i, endGroupIdx) -> 0
-
-                    endGroupIdx == row.length -> {
-                        // reached end of row -- this is a successful arrangement precisely when
-                        // there are no more groups to build
-                        if (j == brokenGroupLengths.size - 1) 1 else 0
-                    }
-
-                    else -> {
-                        // set i to position after end of this group, including the working spring
-                        // that ends this group, and increment j
-                        compute(endGroupIdx + 1, j + 1)
-                    }
-                }
+                return 0
             }
+            // index of the end of the group, exclusive
+            val endGroupIdx = i + brokenGroupLengths[j]
+
+            if (!brokenGroupPossible(i, endGroupIdx)) {
+                return 0
+            }
+            if (endGroupIdx == row.length) {
+                // reached end of row -- this is a successful arrangement precisely when
+                // there are no more groups to build
+                return if (j == brokenGroupLengths.size - 1) 1 else 0
+            }
+            // set i to position after end of this group, including the working spring
+            // that ends this group, and increment j
+            return compute(endGroupIdx + 1, j + 1)
+        }
 
         return when (val c = row[i]) {
             '.' -> computeWorking()
