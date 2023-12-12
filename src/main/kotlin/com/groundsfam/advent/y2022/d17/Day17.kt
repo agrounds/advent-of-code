@@ -1,7 +1,7 @@
 package com.groundsfam.advent.y2022.d17
 
 import com.groundsfam.advent.DATAPATH
-import com.groundsfam.advent.Point
+import com.groundsfam.advent.points.Point
 import com.groundsfam.advent.timed
 import java.util.LinkedList
 import kotlin.io.path.div

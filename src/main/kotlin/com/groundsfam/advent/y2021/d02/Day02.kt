@@ -2,9 +2,9 @@ package com.groundsfam.advent.y2021.d02
 
 import com.groundsfam.advent.DATAPATH
 import com.groundsfam.advent.Direction
-import com.groundsfam.advent.Point
+import com.groundsfam.advent.points.Point
 import com.groundsfam.advent.asPoint
-import com.groundsfam.advent.sum
+import com.groundsfam.advent.points.sum
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 

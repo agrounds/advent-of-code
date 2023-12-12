@@ -1,10 +1,22 @@
 package com.groundsfam.advent
 
+import com.groundsfam.advent.points.Point
+
 enum class Direction {
     UP,
     DOWN,
     LEFT,
-    RIGHT,
+    RIGHT;
+
+    operator fun unaryMinus(): Direction = when (this) {
+        UP -> DOWN
+        DOWN -> UP
+        LEFT -> RIGHT
+        RIGHT -> LEFT
+    }
+
+    fun isVertical(): Boolean = this == UP || this == DOWN
+    fun isHorizontal(): Boolean = !this.isVertical()
 }
 fun Direction.asPoint() = when (this) {
     Direction.UP -> Point(0, -1)
@@ -20,3 +32,5 @@ fun Char.toDirection(): Direction? = when (this) {
     '<' -> Direction.LEFT
     else -> null
 }
+
+fun Point.go(d: Direction): Point = this + d.asPoint()

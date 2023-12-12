@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2022.d24
 
 import com.groundsfam.advent.*
+import com.groundsfam.advent.points.Point
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 

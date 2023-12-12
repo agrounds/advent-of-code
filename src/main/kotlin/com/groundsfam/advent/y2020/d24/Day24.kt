@@ -1,7 +1,7 @@
 package com.groundsfam.advent.y2020.d24
 
 import com.groundsfam.advent.DATAPATH
-import com.groundsfam.advent.Point
+import com.groundsfam.advent.points.Point
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 

@@ -1,6 +1,6 @@
 package com.groundsfam.advent.y2022.d22
 
-import com.groundsfam.advent.Point
+import com.groundsfam.advent.points.Point
 
 // HELPFUL FACT: Cubes are orientable! Therefore adjacent edges will _always_
 // be in "opposition" when all faces are clockwise-oriented in the original map.

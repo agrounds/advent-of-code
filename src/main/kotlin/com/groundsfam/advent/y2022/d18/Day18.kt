@@ -1,9 +1,9 @@
 package com.groundsfam.advent.y2022.d18
 
 import com.groundsfam.advent.DATAPATH
-import com.groundsfam.advent.adjacents
+import com.groundsfam.advent.points.adjacents
 import com.groundsfam.advent.timed
-import com.groundsfam.advent.Point3 as Point
+import com.groundsfam.advent.points.Point3 as Point
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
