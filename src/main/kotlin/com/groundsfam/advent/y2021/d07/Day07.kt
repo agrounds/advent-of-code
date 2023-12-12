@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2021.d07
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 import kotlin.math.abs
@@ -27,7 +28,7 @@ fun minFuelTwo(positions: List<Int>): Int {
     }
 }
 
-fun main() {
+fun main() = timed {
     val positions = (DATAPATH / "2021/day07.txt").useLines { lines ->
         lines.first().split(",").map { it.toInt() }
     }

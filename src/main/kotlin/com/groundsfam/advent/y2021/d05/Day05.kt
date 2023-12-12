@@ -2,6 +2,7 @@ package com.groundsfam.advent.y2021.d05
 
 import com.groundsfam.advent.DATAPATH
 import com.groundsfam.advent.points.Point
+import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -45,7 +46,7 @@ fun findOverlaps(ventLines: List<Pair<Point, Point>>, includeDiagonals: Boolean)
     return overlapPoints.size
 }
 
-fun main() {
+fun main() = timed {
     val ventLines = (DATAPATH / "2021/day05.txt").useLines { lines ->
         lines.toList().map { line ->
             val (first, _, second) = line.split(" ")

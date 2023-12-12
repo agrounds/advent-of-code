@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2021.d04
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -47,7 +48,7 @@ fun scoreBoard(nums: List<Int>, boards: List<Board>, winningBoard: Boolean): Int
     return unmarkedSum * nums[i-1]
 }
 
-fun main() {
+fun main() = timed {
     val (nums, boards) = (DATAPATH / "2021/day04.txt")
         .useLines { it.toList() }
         .let { lines ->

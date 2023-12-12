@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2021.d06
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -26,7 +27,7 @@ fun fishGrowth(initialFish: List<Int>, days: Int): Long {
     return fish.sum()
 }
 
-fun main() {
+fun main() = timed {
     val initialFish = (DATAPATH / "2021/day06.txt").useLines { lines ->
         lines.first().split(",").map { it.toInt() }
     }

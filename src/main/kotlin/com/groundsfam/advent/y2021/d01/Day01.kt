@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2021.d01
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -16,7 +17,7 @@ fun increasingWindows(depths: List<Int>): Int {
     return increasingDepths(windows)
 }
 
-fun main() {
+fun main() = timed {
     val depths = (DATAPATH / "2021/day01.txt").useLines { lines ->
         lines.toList()
             .map { it.toInt() }

@@ -5,6 +5,7 @@ import com.groundsfam.advent.Direction
 import com.groundsfam.advent.points.Point
 import com.groundsfam.advent.asPoint
 import com.groundsfam.advent.points.sum
+import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -32,7 +33,7 @@ fun followDirectionsWithAim(directions: List<Point>): Point {
     return position
 }
 
-fun main() {
+fun main() = timed {
     val directions = (DATAPATH / "2021/day02.txt").useLines { lines ->
         lines.toList().map(::parseLine)
     }

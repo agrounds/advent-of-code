@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2021.d03
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -42,7 +43,7 @@ fun lifeSupportRating(binaryNums: List<String>): Int {
     return oxygen * co2
 }
 
-fun main() {
+fun main() = timed {
     val binaryNums = (DATAPATH / "2021/day03.txt").useLines { lines ->
         lines.toList()
     }
