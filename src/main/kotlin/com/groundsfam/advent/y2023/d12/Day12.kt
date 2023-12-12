@@ -2,18 +2,22 @@ package com.groundsfam.advent.y2023.d12
 
 import com.groundsfam.advent.DATAPATH
 import com.groundsfam.advent.timed
-import java.lang.RuntimeException
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
 // e.g. SpringRecord(".??..??...?##.", listOf(1, 1, 3))
 data class SpringRecord(val row: String, val brokenCounts: List<Int>)
 
-fun springArrangements(row: String, brokenGroupLengths: List<Int>): Int {
+fun SpringRecord.unfold() = SpringRecord(
+    (0 until 5).joinToString("?") { row },
+    (0 until 5).flatMap { brokenCounts }
+)
+
+fun springArrangements(row: String, brokenGroupLengths: List<Int>): Long {
     // cache[i][j], if set, equals the number of arrangements of springs
     // for the substring row[i..] and the sublist brokenCounts[j..]
     val cache = Array(row.length) {
-        IntArray(brokenGroupLengths.size + 1) { -1 }
+        LongArray(brokenGroupLengths.size + 1) { -1L }
     }
 
     // from inclusive, to exclusive
@@ -35,19 +39,19 @@ fun springArrangements(row: String, brokenGroupLengths: List<Int>): Int {
         }
     }
 
-    fun compute(i: Int, j: Int): Int {
+    fun compute(i: Int, j: Int): Long {
         if (i == row.length) {
             return if (j == brokenGroupLengths.size) 1 else 0
         }
 
-        if (cache[i][j] != -1) {
+        if (cache[i][j] != -1L) {
             return cache[i][j]
         }
 
-        fun computeWorking(): Int =
+        fun computeWorking(): Long =
             compute(i + 1, j)
 
-        fun computeBroken(): Int =
+        fun computeBroken(): Long =
             if (j == brokenGroupLengths.size) {
                 0
             } else {
@@ -92,8 +96,15 @@ fun main() = timed {
             SpringRecord(row, counts)
         }
     }
-    springRecords.sumOf { (row, counts) ->
-        springArrangements(row, counts)
-    }
+    springRecords
+        .sumOf { (row, counts) ->
+            springArrangements(row, counts)
+        }
         .also { println("Part one: $it") }
+    springRecords
+        .map(SpringRecord::unfold)
+        .sumOf { (row, counts) ->
+            springArrangements(row, counts)
+        }
+        .also { println("Part two: $it") }
 }
