@@ -24,15 +24,24 @@ class Grid<T>(private val grid: MutableList<MutableList<T>> = mutableListOf()) :
     val numRows: Int = size
     val numCols: Int = if (isEmpty()) 0 else first().size
 
-    val pointIndices: Set<Point> by lazy {
-        this.flatMapIndexedTo(mutableSetOf()) { y, row ->
+    val pointIndices: List<Point> by lazy {
+        this.flatMapIndexedTo(mutableListOf()) { y, row ->
             row.indices.map { x -> Point(x, y) }
         }
     }
 
     fun containsPoint(p: Point): Boolean =
         (p.x in 0 until numCols) && (p.y in 0 until numRows)
+
+    fun gridString(): String =
+        grid.joinToString("\n") { it.joinToString("") }
 }
+
+/**
+ * Creates a new copy of this [Grid] so you can mutate it
+ * without affecting the original one.
+ */
+fun <T> Grid<T>.copy() = this.toGrid()
 
 fun <T> List<List<T>>.toGrid() = Grid(this.mapTo(mutableListOf()) { it.toMutableList() })
 fun Path.readGrid(): Grid<Char> =
