@@ -84,6 +84,9 @@ fun findReflection(pattern: List<List<Char>>, smudged: Boolean): Reflection? {
 
 
 fun main() = timed {
+    // list of patterns
+    // each pattern is a list of rows
+    // each row is a list of characters, a list-ified string
     val patterns: List<List<List<Char>>> = (DATAPATH / "2023/day13.txt").useLines { lines ->
         val parsedPatterns = mutableListOf<List<List<Char>>>()
         var currPattern = mutableListOf<List<Char>>()
@@ -103,22 +106,19 @@ fun main() = timed {
         parsedPatterns
     }
 
-    patterns
-        .sumOf { pattern ->
-            when (val r = findReflection(pattern, smudged = false)) {
+    fun List<List<List<Char>>>.sumReflections(smudged: Boolean): Long =
+        this.sumOf { pattern ->
+            when (val r = findReflection(pattern, smudged)) {
                 is Row -> r.n * 100L
                 is Column -> r.n.toLong()
-                null -> throw RuntimeException("No reflection found for pattern $pattern")
+                null -> throw RuntimeException("No${if (smudged) " smudged" else ""} reflection found for pattern $pattern")
             }
         }
+
+    patterns
+        .sumReflections(smudged = false)
         .also { println("Part one: $it") }
     patterns
-        .sumOf { pattern ->
-            when (val r = findReflection(pattern, smudged = true)) {
-                is Row -> r.n * 100L
-                is Column -> r.n.toLong()
-                null -> throw RuntimeException("No smudged reflection found for pattern $pattern")
-            }
-        }
+        .sumReflections(smudged = true)
         .also { println("Part two: $it") }
 }
