@@ -18,16 +18,6 @@ fun Iterable<Point>.sum(): Point = this.fold(Point(0, 0)) { sum, point ->
     sum + point
 }
 
-operator fun <T> List<List<T>>.get(p: Point) =
-    this[p.y][p.x]
-operator fun <T> MutableList<MutableList<T>>.set(p: Point, v: T) {
-    this[p.y][p.x] = v
-}
-val <T> List<List<T>>.pointIndices: Set<Point>
-    get() = this.flatMapIndexedTo(mutableSetOf()) { y, row ->
-        row.indices.map { x -> Point(x, y) }
-    }
-
 data class Point3(val x: Int, val y: Int, val z: Int) {
     operator fun plus(other: Point3) = Point3(x + other.x, y + other.y, z + other.z)
 }

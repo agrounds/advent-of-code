@@ -6,12 +6,11 @@ import com.groundsfam.advent.Direction.DOWN
 import com.groundsfam.advent.Direction.LEFT
 import com.groundsfam.advent.Direction.RIGHT
 import com.groundsfam.advent.Direction.UP
+import com.groundsfam.advent.Grid
 import com.groundsfam.advent.go
 import com.groundsfam.advent.points.Point
-import com.groundsfam.advent.points.get
-import com.groundsfam.advent.points.pointIndices
-import com.groundsfam.advent.points.set
 import com.groundsfam.advent.timed
+import com.groundsfam.advent.toGrid
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
@@ -32,21 +31,18 @@ fun Char.toPipe(): Pipe =
         else -> Pipe()
     }
 
-class Solution(private val start: Point, private val pipes: List<List<Pipe>>) {
+class Solution(private val start: Point, private val pipes: Grid<Pipe>) {
     // if loop[point] is not null, then point is in the main loop
     // and the direction is the where the loop is going to next
     // for corners, always choose the vertical direction, for purpose
     // of finding the interior points
-    private val loop: List<List<Direction?>>
+    private val loop: Grid<Direction?>
     private val loopLength: Int
     // the direction, either UP or DOWN, of the leftmost edge of the loop
     private val leftLoopDir: Direction
 
     init {
-        val _loop: MutableList<MutableList<Direction?>> =
-            pipes.mapTo(mutableListOf()) { row ->
-                row.mapTo(mutableListOf()) { null }
-            }
+        loop = pipes.map { null }
         var _loopLength = 0
 
         var prevDir: Direction = Direction.entries
@@ -58,19 +54,18 @@ class Solution(private val start: Point, private val pipes: List<List<Pipe>>) {
                 dirs.firstOrNull { it.isVertical() } ?: dirs.first()
             }
 
-        _loop[start] = prevDir
+        loop[start] = prevDir
         var curr: Point = start.go(prevDir)
         _loopLength++
         while (curr != start) {
             val nextDir = pipes[curr].first { it != -prevDir }
             // choose vertical direction if possible
-            _loop[curr] = if (prevDir.isVertical()) prevDir else nextDir
+            loop[curr] = if (prevDir.isVertical()) prevDir else nextDir
             prevDir = nextDir
             curr = curr.go(prevDir)
             _loopLength++
         }
 
-        loop = _loop
         loopLength = _loopLength
         leftLoopDir = loop.firstNotNullOf { row ->
             row.firstOrNull { it != null }
@@ -84,8 +79,7 @@ class Solution(private val start: Point, private val pipes: List<List<Pipe>>) {
             val row = pipes[y]
             var count = 0
             var prevVerticalDir: Direction? = null
-            // TODO fix this with new vertical-oriented strategy
-            row.forEachIndexed { x, c ->
+            row.indices.forEach { x ->
                 when (val d = loop[Point(x, y)]) {
                     null -> {
                         if (prevVerticalDir == leftLoopDir) {
@@ -116,6 +110,7 @@ fun main() = timed {
                 }
             }
             .toList()
+            .toGrid()
         Solution(start!!, pipes)
     }
     println("Part one: ${solution.farthestLoopPoint()}")
