@@ -26,9 +26,8 @@ fun findReflection(pattern: Grid<Char>, smudged: Boolean): Reflection? {
             pattern.getCol(n)
         }
 
-    val (numRows, numCols) = pattern.gridSize
     fun find(byRows: Boolean): Int? {
-        val numLines = if (byRows) numRows else numCols
+        val numLines = if (byRows) pattern.numRows else pattern.numCols
 
         return (1 until numLines).firstOrNull { a ->
             var smudgesRemaining = if (smudged) 1 else 0

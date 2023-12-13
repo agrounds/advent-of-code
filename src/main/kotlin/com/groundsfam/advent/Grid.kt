@@ -20,9 +20,8 @@ value class Grid<T>(private val grid: MutableList<MutableList<T>> = mutableListO
         row[i]
     }
 
-    // Pair(numRows, numColumns)
-    val gridSize: Pair<Int, Int>
-        get() = Pair(size, if (isEmpty()) 0 else first().size)
+    val numRows: Int get() = size
+    val numCols: Int get() = if (isEmpty()) 0 else first().size
 
     val pointIndices: Set<Point>
         get() = this.flatMapIndexedTo(mutableSetOf()) { y, row ->

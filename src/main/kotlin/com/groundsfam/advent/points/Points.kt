@@ -4,7 +4,7 @@ data class Point(val x: Int, val y: Int) {
     operator fun plus(other: Point) = Point(x + other.x, y + other.y)
     operator fun times(factor: Int) = Point(x * factor, y * factor)
 }
-// north south, east, west, and diagonals
+// north, south, east, west, and diagonals
 val Point.n get() = Point(x, y - 1)
 val Point.s get() = Point(x, y + 1)
 val Point.e get() = Point(x + 1, y)
@@ -13,6 +13,12 @@ val Point.nw get() = Point(x - 1, y - 1)
 val Point.ne get() = Point(x + 1, y - 1)
 val Point.sw get() = Point(x - 1, y + 1)
 val Point.se get() = Point(x + 1, y + 1)
+
+// up, down, left and right directions
+val Point.up get() = this.n
+val Point.down get() = this.s
+val Point.left get() = this.w
+val Point.right get() = this.e
 
 fun Iterable<Point>.sum(): Point = this.fold(Point(0, 0)) { sum, point ->
     sum + point
