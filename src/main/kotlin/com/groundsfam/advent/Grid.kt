@@ -1,6 +1,8 @@
 package com.groundsfam.advent
 
 import com.groundsfam.advent.points.Point
+import java.nio.file.Path
+import kotlin.io.path.useLines
 
 class Grid<T>(private val grid: MutableList<MutableList<T>> = mutableListOf()) : MutableList<MutableList<T>> by grid {
     operator fun get(point: Point): T = grid[point.y][point.x]
@@ -33,3 +35,20 @@ class Grid<T>(private val grid: MutableList<MutableList<T>> = mutableListOf()) :
 }
 
 fun <T> List<List<T>>.toGrid() = Grid(this.mapTo(mutableListOf()) { it.toMutableList() })
+fun Path.readGrid(): Grid<Char> =
+    this.useLines { lines ->
+        lines
+            .mapTo(mutableListOf()) {
+                it.toMutableList()
+            }
+            .let(::Grid)
+    }
+
+fun <T> Path.readGrid(transform: (Char) -> T): Grid<T> =
+    this.useLines { lines ->
+        lines
+            .mapTo(mutableListOf()) {
+                it.mapTo(mutableListOf(), transform)
+            }
+            .let(::Grid)
+    }
