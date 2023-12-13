@@ -14,7 +14,7 @@ import kotlin.io.path.useLines
 
 
 fun Grid<Int>.height(p: Point): Int? =
-    if (p in this.pointIndices) this[p]
+    if (this.containsPoint(p)) this[p]
     else null
 
 // Find min distance path from `start` to any given target point via Dikjstra's algorithm

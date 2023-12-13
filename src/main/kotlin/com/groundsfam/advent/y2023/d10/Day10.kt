@@ -48,7 +48,7 @@ class Solution(private val start: Point, private val pipes: Grid<Pipe>) {
         var prevDir: Direction = Direction.entries
             .filter { dir ->
                 val adjacent = start.go(dir)
-                adjacent in pipes.pointIndices && -dir in pipes[adjacent]
+                pipes.containsPoint(adjacent) && -dir in pipes[adjacent]
             }.let { dirs ->
                 // choose vertical direction if possible
                 dirs.firstOrNull { it.isVertical() } ?: dirs.first()
