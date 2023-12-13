@@ -9,6 +9,8 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
 
         <kotlin.version>1.9.21</kotlin.version>
