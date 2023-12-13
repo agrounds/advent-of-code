@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2023.d13
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.Grid
 import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.useLines
@@ -17,20 +18,18 @@ value class Row(val n: Int) : Reflection
 fun diffs(s1: List<Char>, s2: List<Char>): Int =
     s1.zip(s2).count { (c1, c2) -> c1 != c2 }
 
-fun findReflection(pattern: List<List<Char>>, smudged: Boolean): Reflection? {
+fun findReflection(pattern: Grid<Char>, smudged: Boolean): Reflection? {
     fun line(n: Int, byRows: Boolean): List<Char> =
         if (byRows) {
-            pattern[n]
+            pattern.getRow(n)
         } else {
-            pattern.map { line -> line[n] }
+            pattern.getCol(n)
         }
 
+    val (numRows, numCols) = pattern.gridSize
     fun find(byRows: Boolean): Int? {
-        val numLines = if (byRows) {
-            pattern.size
-        } else {
-            pattern[0].size
-        }
+        val numLines = if (byRows) numRows else numCols
+
         return (1 until numLines).firstOrNull { a ->
             var smudgesRemaining = if (smudged) 1 else 0
             val linesMatch = (0 until a).all { a1 ->
@@ -69,16 +68,16 @@ fun main() = timed {
     // list of patterns
     // each pattern is a list of rows
     // each row is a list of characters, a list-ified string
-    val patterns: List<List<List<Char>>> = (DATAPATH / "2023/day13.txt").useLines { lines ->
-        val parsedPatterns = mutableListOf<List<List<Char>>>()
-        var currPattern = mutableListOf<List<Char>>()
+    val patterns: List<Grid<Char>> = (DATAPATH / "2023/day13.txt").useLines { lines ->
+        val parsedPatterns = mutableListOf<Grid<Char>>()
+        var currPattern = Grid<Char>()
 
         lines.forEach { line ->
             if (line.isBlank()) {
                 parsedPatterns.add(currPattern)
-                currPattern = mutableListOf()
+                currPattern = Grid()
             } else {
-                currPattern.add(line.toList())
+                currPattern.add(line.toMutableList())
             }
         }
         if (currPattern.isNotEmpty()) {
@@ -88,7 +87,7 @@ fun main() = timed {
         parsedPatterns
     }
 
-    fun List<List<List<Char>>>.sumReflections(smudged: Boolean): Long =
+    fun List<Grid<Char>>.sumReflections(smudged: Boolean): Long =
         this.sumOf { pattern ->
             when (val r = findReflection(pattern, smudged)) {
                 is Row -> r.n * 100L

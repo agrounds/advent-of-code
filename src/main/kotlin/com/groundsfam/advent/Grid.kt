@@ -3,7 +3,7 @@ package com.groundsfam.advent
 import com.groundsfam.advent.points.Point
 
 @JvmInline
-value class Grid<T>(private val grid: MutableList<MutableList<T>>) : MutableList<MutableList<T>> by grid {
+value class Grid<T>(private val grid: MutableList<MutableList<T>> = mutableListOf()) : MutableList<MutableList<T>> by grid {
     operator fun get(point: Point): T = grid[point.y][point.x]
     operator fun set(p: Point, v: T) {
         grid[p.y][p.x] = v
@@ -14,6 +14,15 @@ value class Grid<T>(private val grid: MutableList<MutableList<T>>) : MutableList
             row.mapTo(mutableListOf(), transform)
         }
     )
+
+    fun getRow(i: Int): MutableList<T> = grid[i]
+    fun getCol(i: Int): MutableList<T> = grid.mapTo(mutableListOf()) { row ->
+        row[i]
+    }
+
+    // Pair(numRows, numColumns)
+    val gridSize: Pair<Int, Int>
+        get() = Pair(size, if (isEmpty()) 0 else first().size)
 
     val pointIndices: Set<Point>
         get() = this.flatMapIndexedTo(mutableSetOf()) { y, row ->
