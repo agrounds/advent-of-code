@@ -1,5 +1,3 @@
-@file:Suppress("MemberVisibilityCanBePrivate")
-
 package com.groundsfam.advent.y2023.d14
 
 import com.groundsfam.advent.DATAPATH
@@ -17,29 +15,6 @@ import com.groundsfam.advent.timed
 import kotlin.io.path.div
 
 
-private fun Grid<*>.directedIndices(direction: Direction): List<Point> = when (direction) {
-    UP -> (0 until numRows).flatMap { y ->
-        (0 until numCols).map { x ->
-            Point(x, y)
-        }
-    }
-    DOWN -> (0 until numRows).reversed().flatMap { y ->
-        (0 until numCols).map { x ->
-            Point(x, y)
-        }
-    }
-    LEFT -> (0 until numCols).flatMap { x ->
-        (0 until numRows).map { y ->
-            Point(x, y)
-        }
-    }
-    RIGHT -> (0 until numCols).reversed().flatMap { x ->
-        (0 until numRows).map { y ->
-            Point(x, y)
-        }
-    }
-}
-
 private fun Grid<Char>.toKey() = joinToString("") { it.joinToString("") }
 
 private class Solution(private val originalPlatform: Grid<Char>) {
@@ -49,8 +24,31 @@ private class Solution(private val originalPlatform: Grid<Char>) {
     private var tiltDir: Direction = UP
     private var repetitionPeriod: Int? = null
 
+    private val directedIndices = mapOf(
+        UP to (0 until platform.numRows).flatMap { y ->
+            (0 until platform.numCols).map { x ->
+                Point(x, y)
+            }
+        },
+        DOWN to (0 until platform.numRows).reversed().flatMap { y ->
+            (0 until platform.numCols).map { x ->
+                Point(x, y)
+            }
+        },
+        LEFT to (0 until platform.numCols).flatMap { x ->
+            (0 until platform.numRows).map { y ->
+                Point(x, y)
+            }
+        },
+        RIGHT to (0 until platform.numCols).reversed().flatMap { x ->
+            (0 until platform.numRows).map { y ->
+                Point(x, y)
+            }
+        },
+    )
+
     fun tilt() {
-        platform.directedIndices(tiltDir).forEach { p ->
+        directedIndices[tiltDir]!!.forEach { p ->
             if (platform[p] == 'O') {
                 // to will be the point that p slides north to
                 var to = p
