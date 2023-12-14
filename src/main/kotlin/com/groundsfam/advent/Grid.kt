@@ -25,6 +25,8 @@ class Grid<T>(private val grid: MutableList<MutableList<T>> = mutableListOf()) :
     val numCols: Int = if (isEmpty()) 0 else first().size
     val gridSize: Int = numRows * numCols
 
+    // goes in order, rows then columns, like so:
+    // (0, 0), (0, 1), (0, 2), ..., (1, 0), (1, 1), (1, 2), ...
     val pointIndices: List<Point> by lazy {
         this.flatMapIndexedTo(mutableListOf()) { y, row ->
             row.indices.map { x -> Point(x, y) }
