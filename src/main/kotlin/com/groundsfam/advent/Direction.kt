@@ -15,6 +15,19 @@ enum class Direction {
         RIGHT -> LEFT
     }
 
+    val cw: Direction get() = when (this) {
+        UP -> RIGHT
+        RIGHT -> DOWN
+        DOWN -> LEFT
+        LEFT -> UP
+    }
+    val ccw: Direction get() = when (this) {
+        UP -> LEFT
+        LEFT -> DOWN
+        DOWN -> RIGHT
+        RIGHT -> UP
+    }
+
     fun isVertical(): Boolean = this == UP || this == DOWN
     fun isHorizontal(): Boolean = !this.isVertical()
 }

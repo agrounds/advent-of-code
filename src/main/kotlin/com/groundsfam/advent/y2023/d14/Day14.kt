@@ -1,3 +1,5 @@
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package com.groundsfam.advent.y2023.d14
 
 import com.groundsfam.advent.DATAPATH
@@ -15,7 +17,7 @@ import com.groundsfam.advent.timed
 import kotlin.io.path.div
 
 
-fun Grid<*>.directedIndices(direction: Direction): List<Point> = when (direction) {
+private fun Grid<*>.directedIndices(direction: Direction): List<Point> = when (direction) {
     UP -> (0 until numRows).flatMap { y ->
         (0 until numCols).map { x ->
             Point(x, y)
@@ -38,31 +40,70 @@ fun Grid<*>.directedIndices(direction: Direction): List<Point> = when (direction
     }
 }
 
-class Solution(platform: Grid<Char>) {
-    val grid = platform.copy()
+private fun Grid<Char>.toKey() = joinToString("") { it.joinToString("") }
 
-    fun tilt(direction: Direction) {
-        grid.directedIndices(direction).forEach { p ->
-            if (grid[p] == 'O') {
+private class Solution(private val originalPlatform: Grid<Char>) {
+    val platform = originalPlatform.copy()
+    var cycleCount = 0
+        private set
+    private var tiltDir: Direction = UP
+    private var repetitionPeriod: Int? = null
+
+    fun tilt() {
+        platform.directedIndices(tiltDir).forEach { p ->
+            if (platform[p] == 'O') {
                 // to will be the point that p slides north to
                 var to = p
-                var toNext = to.go(direction)
-                while (grid.containsPoint(toNext) && grid[toNext] == '.') {
+                var toNext = to.go(tiltDir)
+                while (platform.containsPoint(toNext) && platform[toNext] == '.') {
                     to = toNext
-                    toNext = to.go(direction)
+                    toNext = to.go(tiltDir)
                 }
-                grid[to] = 'O'
+                platform[to] = 'O'
                 if (p != to) {
-                    grid[p] = '.'
+                    platform[p] = '.'
                 }
             }
         }
+        tiltDir = tiltDir.ccw
+    }
+
+    fun cycle() {
+        do {
+            tilt()
+        } while (tiltDir != UP)
+        cycleCount++
+    }
+
+    // returns the period of repetition
+    fun findRepetition(): Int {
+        repetitionPeriod?.also {
+            return it
+        }
+
+        val cycles = mutableMapOf(
+            originalPlatform.toKey() to 0,
+        )
+        // handle rest of first cycle
+        cycle()
+        assert(cycleCount == 1)
+
+        // continue cycling until a repeated configuration is found
+        var key = platform.toKey()
+        while (key !in cycles.keys) {
+            cycles[key] = cycleCount
+            cycle()
+            key = platform.toKey()
+        }
+
+        return (cycleCount - cycles[key]!!)
+            .also { repetitionPeriod = it }
     }
 
     fun load(): Int =
-        grid.pointIndices.sumOf { p ->
-            if (grid[p] == 'O') {
-                grid.numRows - p.y
+        platform.pointIndices.sumOf { p ->
+            if (platform[p] == 'O') {
+                platform.numRows - p.y
             } else {
                 0
             }
@@ -74,6 +115,12 @@ fun main() = timed {
         .readGrid()
         .let(::Solution)
 
-    solution.tilt(UP)
+    solution.tilt()
     println("Part one: ${solution.load()}")
+
+    val period = solution.findRepetition()
+    repeat((1_000_000_000 - solution.cycleCount) % period) {
+        solution.cycle()
+    }
+    println("Part two: ${solution.load()}")
 }

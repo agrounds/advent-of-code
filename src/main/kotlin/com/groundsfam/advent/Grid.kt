@@ -36,6 +36,7 @@ class Grid<T>(private val grid: MutableList<MutableList<T>> = mutableListOf()) :
     fun containsPoint(p: Point): Boolean =
         (p.x in 0 until numCols) && (p.y in 0 until numRows)
 
+    @Suppress("unused")
     fun gridString(): String =
         grid.joinToString("\n") { it.joinToString("") }
 }
