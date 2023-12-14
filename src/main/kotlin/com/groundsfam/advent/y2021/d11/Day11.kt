@@ -10,11 +10,13 @@ import com.groundsfam.advent.timed
 import kotlin.io.path.div
 
 
-fun countFlashes(octopuses: Grid<Int>): Int {
-    val grid = octopuses.copy()
-    var flashes = 0
+class Solution(octopuses: Grid<Int>) {
+    private val grid = octopuses.copy()
+    private var steps = 0
+    private var allFlashStep: Int? = null
 
-    repeat(100) {
+    fun step(): Int {
+        var flashes = 0
         val didFlash = mutableSetOf<Point>()
         val willFlash = ArrayDeque<Point>()
 
@@ -47,14 +49,30 @@ fun countFlashes(octopuses: Grid<Int>): Int {
         didFlash.forEach { p ->
             grid[p] = 0
         }
+
+        steps++
+        if (allFlashStep == null && flashes == grid.gridSize) {
+            allFlashStep = steps
+        }
+        return flashes
     }
 
-    return flashes
+    fun stepUntilAllFlash(): Int {
+        while (allFlashStep == null) {
+            step()
+        }
+        return allFlashStep!!
+    }
 }
 
 fun main() = timed {
-    val octopuses = (DATAPATH / "2021/day11.txt")
+    val solution = (DATAPATH / "2021/day11.txt")
         .readGrid(Char::digitToInt)
+        .let(::Solution)
 
-    println("Part one: ${countFlashes(octopuses)}")
+    val partOne = (1..100).sumOf {
+        solution.step()
+    }
+    println("Part one: $partOne")
+    println("Part two ${solution.stepUntilAllFlash()}")
 }
