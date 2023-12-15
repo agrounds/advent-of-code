@@ -2,7 +2,6 @@ package com.groundsfam.advent.y2023.d15
 
 import com.groundsfam.advent.DATAPATH
 import com.groundsfam.advent.timed
-import java.util.LinkedList
 import kotlin.io.path.div
 import kotlin.io.path.readLines
 
@@ -15,33 +14,22 @@ private fun hash(s: String): Int =
     }
 
 private fun executeHashmap(instructions: List<Instruction>): Long {
-    val boxes = Array(256) { LinkedList<Lens>() }
+    val boxes = Array(256) { linkedMapOf<String, Lens>() }
 
     instructions.forEach { ins ->
         val box = boxes[hash(ins.label)]
         when (ins) {
             is Remove -> {
-                // hidden assumption: there is at most one lens with a given label in the box
-                // but this will always be true: a second insert instruction for the same label
-                // results in the first lens being replaced, rather than a second lens with the
-                // same label being added
-                box.removeIf { it.label == ins.label }
+                box.remove(ins.label)
             }
             is Insert -> {
-                val newLens = Lens(ins.label, ins.focalLength)
-                val i = box.indexOfFirst { it.label == ins.label }
-
-                if (i != -1) {
-                    box[i] = newLens
-                } else {
-                    box.add(newLens)
-                }
+                box[ins.label] = Lens(ins.label, ins.focalLength)
             }
         }
     }
 
     return boxes.indices.sumOf { i ->
-        boxes[i].foldIndexed(0L) { j, sum, lens ->
+        boxes[i].values.foldIndexed(0L) { j, sum, lens ->
             sum + (i + 1) * (j + 1) * lens.focalLength
         }
     }
