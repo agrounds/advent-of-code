@@ -28,8 +28,8 @@ private fun executeHashmap(instructions: List<Instruction>): Long {
         }
     }
 
-    return boxes.indices.sumOf { i ->
-        boxes[i].values.foldIndexed(0L) { j, sum, lens ->
+    return boxes.withIndex().sumOf { (i, box) ->
+        box.values.foldIndexed(0L) { j, sum, lens ->
             sum + (i + 1) * (j + 1) * lens.focalLength
         }
     }
