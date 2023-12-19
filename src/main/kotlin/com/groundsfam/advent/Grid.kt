@@ -5,6 +5,14 @@ import java.nio.file.Path
 import kotlin.io.path.useLines
 
 class Grid<T>(private val grid: MutableList<MutableList<T>> = mutableListOf()) : MutableList<MutableList<T>> by grid {
+    constructor(numRows: Int, numCols: Int, init: (Point) -> T) : this(
+        (0 until numCols).mapTo(mutableListOf()) { y ->
+            (0 until numRows).mapTo(mutableListOf()) { x ->
+                init(Point(x, y))
+            }
+        }
+    )
+
     operator fun get(point: Point): T = grid[point.y][point.x]
     operator fun set(p: Point, v: T) {
         grid[p.y][p.x] = v

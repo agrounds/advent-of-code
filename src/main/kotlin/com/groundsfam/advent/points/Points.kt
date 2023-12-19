@@ -4,6 +4,7 @@ import com.groundsfam.advent.Direction
 
 data class Point(val x: Int, val y: Int) {
     operator fun plus(other: Point) = Point(x + other.x, y + other.y)
+    operator fun minus(other: Point) = Point(x - other.x, y - other.y)
     operator fun times(factor: Int) = Point(x * factor, y * factor)
 }
 // north, south, east, west, and diagonals
