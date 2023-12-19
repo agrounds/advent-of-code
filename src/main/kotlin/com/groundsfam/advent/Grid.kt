@@ -16,6 +16,14 @@ class Grid<T>(private val grid: MutableList<MutableList<T>> = mutableListOf()) :
         }
     )
 
+    inline fun <R> mapIndexed(transform: (Point, T) -> R): Grid<R> = Grid(
+        this.mapIndexedTo(mutableListOf()) { y, row ->
+            row.mapIndexedTo(mutableListOf()) { x, v ->
+                transform(Point(x, y), v)
+            }
+        }
+    )
+
     fun getRow(i: Int): MutableList<T> = grid[i]
     fun getCol(i: Int): MutableList<T> = grid.mapTo(mutableListOf()) { row ->
         row[i]
