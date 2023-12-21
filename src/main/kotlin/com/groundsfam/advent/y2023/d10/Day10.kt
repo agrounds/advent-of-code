@@ -6,11 +6,13 @@ import com.groundsfam.advent.Direction.DOWN
 import com.groundsfam.advent.Direction.LEFT
 import com.groundsfam.advent.Direction.RIGHT
 import com.groundsfam.advent.Direction.UP
-import com.groundsfam.advent.Grid
+import com.groundsfam.advent.grids.Grid
 import com.groundsfam.advent.go
+import com.groundsfam.advent.grids.containsPoint
+import com.groundsfam.advent.grids.map
 import com.groundsfam.advent.points.Point
 import com.groundsfam.advent.timed
-import com.groundsfam.advent.toGrid
+import com.groundsfam.advent.grids.toGrid
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 

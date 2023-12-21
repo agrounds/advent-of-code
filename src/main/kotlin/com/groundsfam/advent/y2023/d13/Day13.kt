@@ -1,7 +1,7 @@
 package com.groundsfam.advent.y2023.d13
 
 import com.groundsfam.advent.DATAPATH
-import com.groundsfam.advent.Grid
+import com.groundsfam.advent.grids.Grid
 import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.useLines

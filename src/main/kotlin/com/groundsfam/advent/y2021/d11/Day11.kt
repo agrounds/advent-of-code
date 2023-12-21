@@ -1,11 +1,12 @@
 package com.groundsfam.advent.y2021.d11
 
 import com.groundsfam.advent.DATAPATH
-import com.groundsfam.advent.Grid
-import com.groundsfam.advent.copy
+import com.groundsfam.advent.grids.Grid
+import com.groundsfam.advent.grids.containsPoint
+import com.groundsfam.advent.grids.copy
 import com.groundsfam.advent.points.Point
 import com.groundsfam.advent.points.adjacents
-import com.groundsfam.advent.readGrid
+import com.groundsfam.advent.grids.readGrid
 import com.groundsfam.advent.timed
 import kotlin.io.path.div
 
