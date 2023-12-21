@@ -10,6 +10,14 @@ import kotlin.io.path.useLines
  */
 fun <T> Grid<T>.copy() = this.toGrid()
 fun <T> List<List<T>>.toGrid() = Grid(this.mapTo(mutableListOf()) { it.toMutableList() })
+
+fun <T> Grid<T>.containsPoint(p: Point): Boolean =
+    (p.x in 0 until numCols) && (p.y in 0 until numRows)
+
+fun <T> Grid<T>.maybeGet(p: Point): T? =
+    if (containsPoint(p)) this[p]
+    else null
+
 inline fun <T, R> Grid<T>.map(transform: (T) -> R): Grid<R> = Grid(
     this.mapTo(mutableListOf()) { row ->
         row.mapTo(mutableListOf(), transform)
@@ -28,9 +36,6 @@ fun <T> Grid<T>.count(predicate: (T) -> Boolean): Int =
     this.sumOf { row ->
         row.count(predicate)
     }
-
-fun <T> Grid<T>.containsPoint(p: Point): Boolean =
-    (p.x in 0 until numCols) && (p.y in 0 until numRows)
 
 fun Path.readGrid(): Grid<Char> =
     this.useLines { lines ->
