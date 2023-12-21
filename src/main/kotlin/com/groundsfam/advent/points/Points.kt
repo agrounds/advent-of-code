@@ -1,6 +1,7 @@
 package com.groundsfam.advent.points
 
 import com.groundsfam.advent.Direction
+import com.groundsfam.advent.asPoint
 
 data class Point(val x: Int, val y: Int) {
     operator fun plus(other: Point) = Point(x + other.x, y + other.y)
@@ -26,6 +27,8 @@ val Point.right get() = this.e
 fun Point.adjacents(diagonal: Boolean = true): List<Point> =
     if (diagonal) listOf(n, nw, w, sw, s, se, e, ne)
     else listOf(n, w, s, e)
+
+fun Point.go(d: Direction): Point = this + d.asPoint()
 
 fun Iterable<Point>.sum(): Point = this.fold(Point(0, 0)) { sum, point ->
     sum + point

@@ -8,7 +8,7 @@ import com.groundsfam.advent.Direction.RIGHT
 import com.groundsfam.advent.Direction.UP
 import com.groundsfam.advent.grids.Grid
 import com.groundsfam.advent.grids.copy
-import com.groundsfam.advent.go
+import com.groundsfam.advent.points.go
 import com.groundsfam.advent.grids.containsPoint
 import com.groundsfam.advent.points.Point
 import com.groundsfam.advent.grids.readGrid

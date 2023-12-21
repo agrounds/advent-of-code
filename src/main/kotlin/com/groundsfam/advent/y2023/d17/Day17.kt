@@ -3,7 +3,7 @@ package com.groundsfam.advent.y2023.d17
 import com.groundsfam.advent.DATAPATH
 import com.groundsfam.advent.Direction
 import com.groundsfam.advent.grids.Grid
-import com.groundsfam.advent.go
+import com.groundsfam.advent.points.go
 import com.groundsfam.advent.grids.containsPoint
 import com.groundsfam.advent.points.Point
 import com.groundsfam.advent.grids.readGrid

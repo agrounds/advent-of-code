@@ -45,5 +45,3 @@ fun Char.toDirection(): Direction? = when (this) {
     '<' -> Direction.LEFT
     else -> null
 }
-
-fun Point.go(d: Direction): Point = this + d.asPoint()
