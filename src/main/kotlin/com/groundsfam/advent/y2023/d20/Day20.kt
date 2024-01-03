@@ -34,14 +34,16 @@ data object Broadcaster : Module() {
 
 data class ModuleConnection(val module: Module, val destinations: List<String>)
 
+data class ButtonResult(val lowPulses: Int, val highPulses: Int, val rxLowPulses: Int)
 class Solution(private val connections: Map<String, ModuleConnection>) {
-    fun pressButton(): Pair<Int, Int> {
+    fun pressButton(): ButtonResult {
         data class Pulse(val pulse: Boolean, val from: String, val to: String)
 
         val pulseQueue = ArrayDeque<Pulse>()
         pulseQueue.add(Pulse(false, "button", "broadcaster"))
         var lowPulses = 0
         var highPulses = 0
+        var rxLowPulses = 0
 
         while (pulseQueue.isNotEmpty()) {
             val (pulse, from, to) = pulseQueue.removeFirst()
@@ -49,6 +51,9 @@ class Solution(private val connections: Map<String, ModuleConnection>) {
                 highPulses++
             } else {
                 lowPulses++
+                if (to == "rx") {
+                    rxLowPulses++
+                }
             }
 
             connections[to]?.let { (module, destinations) ->
@@ -61,7 +66,7 @@ class Solution(private val connections: Map<String, ModuleConnection>) {
             }
         }
 
-        return Pair(lowPulses, highPulses)
+        return ButtonResult(lowPulses, highPulses, rxLowPulses)
     }
 }
 
@@ -102,11 +107,25 @@ fun main() = timed {
     }
         .let(::Solution)
 
+    var buttonPressesToStartSand: Int? = null
     (0 until 1000)
-        .fold(Pair(0L, 0L)) { (lowSum, highSum), _ ->
-            val (low, high) = solution.pressButton()
+        .fold(Pair(0L, 0L)) { (lowSum, highSum), i ->
+            val (low, high, rxLowPresses) = solution.pressButton()
+            if (buttonPressesToStartSand == null && rxLowPresses == 1) {
+                buttonPressesToStartSand = (i + 1)
+            }
             Pair(lowSum + low, highSum + high)
         }
         .let { (l, h) -> l * h }
         .also { println("Part one: $it") }
+
+    var buttonPresses = 1000
+    while (buttonPressesToStartSand == null) {
+        val (_, _, rxLowPresses) = solution.pressButton()
+        buttonPresses++
+        if (rxLowPresses == 1) {
+            buttonPressesToStartSand = buttonPresses
+        }
+    }
+    println("Part two: $buttonPressesToStartSand")
 }
