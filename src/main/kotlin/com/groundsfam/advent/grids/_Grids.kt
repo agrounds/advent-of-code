@@ -54,3 +54,8 @@ fun <T> Path.readGrid(transform: (Char) -> T): Grid<T> =
             }
             .let(::Grid)
     }
+
+fun <T> Grid<T>.pointOfFirst(predicate: (T) -> Boolean): Point =
+    pointIndices.first { p ->
+        predicate(this[p])
+    }
