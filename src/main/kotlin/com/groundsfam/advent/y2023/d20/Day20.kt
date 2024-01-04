@@ -8,6 +8,7 @@ import kotlin.io.path.useLines
 
 sealed class Module {
     abstract fun receive(pulse: Boolean, from: String): Boolean?
+    abstract fun state(): List<Boolean>
 }
 class FlipFlop : Module() {
     private var state: Boolean = false
@@ -18,6 +19,8 @@ class FlipFlop : Module() {
             state = !state
             state
         }
+
+    override fun state(): List<Boolean> = listOf(state)
 }
 class Conjunction(inputs: Set<String>) : Module() {
     private val recentPulses = inputs
@@ -27,16 +30,27 @@ class Conjunction(inputs: Set<String>) : Module() {
         recentPulses[from] = pulse
         return recentPulses.any { (_, v) -> !v }
     }
+
+    override fun state(): List<Boolean> = recentPulses.values.toList()
 }
 data object Broadcaster : Module() {
     override fun receive(pulse: Boolean, from: String): Boolean = pulse
+    override fun state(): List<Boolean> = emptyList()
 }
 
 data class ModuleConnection(val module: Module, val destinations: List<String>)
+data class RxInputPartition(
+    val modules: Set<Module>,
+    val states: MutableMap<Long, Int> = mutableMapOf(),
+    var period: Int? = null,
+    var repeatFrom: Int? = null,
+    val lowPulses: MutableList<List<Int>>,
+    val highPulses: MutableList<List<Int>>,
+)
 
-data class ButtonResult(val lowPulses: Int, val highPulses: Int, val rxLowPulses: Int)
 class Solution(private val connections: Map<String, ModuleConnection>) {
-    private val rxInputPartitions: List<Set<Module>>
+    private val rxInputPartitions: Map<String, RxInputPartition>
+    private var buttonPresses: Int = 0
 
     init {
         // In my input, there is a single conjunction module that connects to rx (call it rxIn),
@@ -56,7 +70,7 @@ class Solution(private val connections: Map<String, ModuleConnection>) {
         rxInputPartitions = connections
             .filterValues { it.destinations.contains(rxIn) }
             .keys
-            .map { moduleName ->
+            .associateWith { moduleName ->
                 val partition = mutableSetOf<Module>()
                 val visited = mutableSetOf<String>()
                 visited.addAll(listOf("broadcaster", rxIn))
@@ -76,18 +90,27 @@ class Solution(private val connections: Map<String, ModuleConnection>) {
                         }
                     }
                 }
-                partition
+                RxInputPartition(
+                    partition,
+                    // add empty lists here to represent the fact that no pulses are sent
+                    // before the button has been pressed the first time
+                    lowPulses = mutableListOf(emptyList()),
+                    highPulses = mutableListOf(emptyList())
+                )
             }
     }
 
-    fun pressButton(): ButtonResult {
+    fun pressButton(): Pair<Int, Int> {
+        buttonPresses++
+
         data class Pulse(val pulse: Boolean, val from: String, val to: String)
 
         val pulseQueue = ArrayDeque<Pulse>()
         pulseQueue.add(Pulse(false, "button", "broadcaster"))
         var lowPulses = 0
         var highPulses = 0
-        var rxLowPulses = 0
+        val rxInputLowPulses = rxInputPartitions.mapValues { mutableListOf<Int>() }
+        val rxInputHighPulses = rxInputPartitions.mapValues { mutableListOf<Int>() }
 
         while (pulseQueue.isNotEmpty()) {
             val (pulse, from, to) = pulseQueue.removeFirst()
@@ -95,10 +118,9 @@ class Solution(private val connections: Map<String, ModuleConnection>) {
                 highPulses++
             } else {
                 lowPulses++
-                if (to == "rx") {
-                    rxLowPulses++
-                }
             }
+            val rxInputPulses = if (pulse) rxInputHighPulses else rxInputLowPulses
+            rxInputPulses[from]?.add(lowPulses + highPulses)
 
             connections[to]?.let { (module, destinations) ->
                 val nextPulse = module.receive(pulse, from)
@@ -110,7 +132,29 @@ class Solution(private val connections: Map<String, ModuleConnection>) {
             }
         }
 
-        return ButtonResult(lowPulses, highPulses, rxLowPulses)
+        rxInputPartitions.forEach { (modName, partition) ->
+            val state = partition.modules.flatMap { it.state() }.fold(0L) { s, v ->
+                s * 2 + (if (v) 1 else 0)
+            }
+            val prevButtonPresses = partition.states[state]
+            if (prevButtonPresses == null) {
+                partition.states[state] = buttonPresses
+            } else {
+                partition.repeatFrom = prevButtonPresses
+                partition.period = buttonPresses - prevButtonPresses
+            }
+            partition.lowPulses.add(rxInputLowPulses[modName]!!)
+            partition.highPulses.add(rxInputHighPulses[modName]!!)
+        }
+
+        return Pair(lowPulses, highPulses)
+    }
+
+    fun seekPartitionPeriods(): List<RxInputPartition> {
+        while (rxInputPartitions.values.any { it.period == null }) {
+            pressButton()
+        }
+        return rxInputPartitions.values.toList()
     }
 }
 
@@ -151,28 +195,13 @@ fun main() = timed {
     }
         .let(::Solution)
 
-    var buttonPressesToStartSand: Int? = null
-    val rxLowPulseCounts = mutableMapOf<Int, Int>()
     (0 until 1000)
         .fold(Pair(0L, 0L)) { (lowSum, highSum), i ->
-            val (low, high, rxLowPresses) = solution.pressButton()
-            rxLowPulseCounts[rxLowPresses] = (rxLowPulseCounts[rxLowPresses] ?: 0) + 1
-            if (buttonPressesToStartSand == null && rxLowPresses == 1) {
-                buttonPressesToStartSand = (i + 1)
-            }
+            val (low, high) = solution.pressButton()
             Pair(lowSum + low, highSum + high)
         }
         .let { (l, h) -> l * h }
         .also { println("Part one: $it") }
-
-    var buttonPresses = 1000
-    while (buttonPressesToStartSand == null && buttonPresses < 1_000_000) {
-        val (_, _, rxLowPresses) = solution.pressButton()
-        rxLowPulseCounts[rxLowPresses] = (rxLowPulseCounts[rxLowPresses] ?: 0) + 1
-        buttonPresses++
-        if (rxLowPresses == 1) {
-            buttonPressesToStartSand = buttonPresses
-        }
-    }
-    println("Part two: $buttonPressesToStartSand")
+    val res = solution.seekPartitionPeriods()
+    println()
 }
