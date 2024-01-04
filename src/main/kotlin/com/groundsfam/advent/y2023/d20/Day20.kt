@@ -36,6 +36,50 @@ data class ModuleConnection(val module: Module, val destinations: List<String>)
 
 data class ButtonResult(val lowPulses: Int, val highPulses: Int, val rxLowPulses: Int)
 class Solution(private val connections: Map<String, ModuleConnection>) {
+    private val rxInputPartitions: List<Set<Module>>
+
+    init {
+        // In my input, there is a single conjunction module that connects to rx (call it rxIn),
+        // and four conjunction modules that connect to that one. The module graph seems to be
+        // partitioned, so that these modules run totally independently of one another.
+        // Therefore, our strategy is to identify loops in state for each of these partitions
+        // separately, and the time at which these modules send high pulses to rxIn. rxIn sends
+        // a low pulse to rx exactly when it receives a high pulse from each of its inputs, and this
+        // must happen simultaneously.
+
+        fun incoming(moduleName: String): Set<String> =
+            connections
+                .filterValues { it.destinations.contains(moduleName) }
+                .keys
+
+        val rxIn = incoming("rx").first()
+        rxInputPartitions = connections
+            .filterValues { it.destinations.contains(rxIn) }
+            .keys
+            .map { moduleName ->
+                val partition = mutableSetOf<Module>()
+                val visited = mutableSetOf<String>()
+                visited.addAll(listOf("broadcaster", rxIn))
+
+                val queue = ArrayDeque<String>()
+                queue.add(moduleName)
+
+                while (queue.isNotEmpty()) {
+                    val name = queue.removeFirst()
+                    visited.add(name)
+                    connections[name]?.module?.also {
+                        partition.add(it)
+                        (incoming(name) + connections[name]!!.destinations).forEach { n ->
+                            if (n !in visited) {
+                                queue.add(n)
+                            }
+                        }
+                    }
+                }
+                partition
+            }
+    }
+
     fun pressButton(): ButtonResult {
         data class Pulse(val pulse: Boolean, val from: String, val to: String)
 
@@ -108,9 +152,11 @@ fun main() = timed {
         .let(::Solution)
 
     var buttonPressesToStartSand: Int? = null
+    val rxLowPulseCounts = mutableMapOf<Int, Int>()
     (0 until 1000)
         .fold(Pair(0L, 0L)) { (lowSum, highSum), i ->
             val (low, high, rxLowPresses) = solution.pressButton()
+            rxLowPulseCounts[rxLowPresses] = (rxLowPulseCounts[rxLowPresses] ?: 0) + 1
             if (buttonPressesToStartSand == null && rxLowPresses == 1) {
                 buttonPressesToStartSand = (i + 1)
             }
@@ -120,8 +166,9 @@ fun main() = timed {
         .also { println("Part one: $it") }
 
     var buttonPresses = 1000
-    while (buttonPressesToStartSand == null) {
+    while (buttonPressesToStartSand == null && buttonPresses < 1_000_000) {
         val (_, _, rxLowPresses) = solution.pressButton()
+        rxLowPulseCounts[rxLowPresses] = (rxLowPulseCounts[rxLowPresses] ?: 0) + 1
         buttonPresses++
         if (rxLowPresses == 1) {
             buttonPressesToStartSand = buttonPresses
