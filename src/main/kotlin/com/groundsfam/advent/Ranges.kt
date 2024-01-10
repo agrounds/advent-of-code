@@ -1,6 +1,14 @@
 package com.groundsfam.advent
 
 
+
+fun IntRange.rangeIntersect(that: IntRange): IntRange? = when {
+    this.first in that -> this.first..min(this.last, that.last)
+    this.last in that -> max(this.first, that.first)..this.last
+    this.first < that.first && this.last > that.last -> that
+    else -> null
+}
+
 fun LongRange.rangeIntersect(that: LongRange): LongRange? = when {
     this.first in that -> this.first..min(this.last, that.last)
     this.last in that -> max(this.first, that.first)..this.last
