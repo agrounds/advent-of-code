@@ -83,6 +83,27 @@ private class Solution(bricks: List<Brick>) {
 
         return settledBricks.size - unsafeBricks.size
     }
+
+    fun chainReaction(): Int {
+        var sum = 0
+
+        settledBricks.forEach { brick ->
+            val removedBricks = mutableSetOf(brick)
+            val queue = ArrayDeque<Brick>()
+            queue.addAll(supports.getValue(brick))
+
+            while (queue.isNotEmpty()) {
+                val nextBrick = queue.removeFirst()
+                if (nextBrick !in removedBricks && restsOn[nextBrick]!!.all { it in removedBricks }) {
+                    sum++
+                    removedBricks.add(nextBrick)
+                    queue.addAll(supports.getValue(nextBrick))
+                }
+            }
+        }
+
+        return sum
+    }
 }
 
 fun main() = timed {
@@ -97,4 +118,5 @@ fun main() = timed {
             .let(::Solution)
     }
     println("Part one: ${solution.safeBricks()}")
+    println("Part two: ${solution.chainReaction()}")
 }
