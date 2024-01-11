@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2023.d22
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.mapWithPutDefault
 import com.groundsfam.advent.rangeIntersect
 import com.groundsfam.advent.timed
 import java.util.TreeSet
@@ -19,11 +20,8 @@ private fun Brick.intersect(that: Brick): Brick? {
 
 private fun Brick.fall(): Brick = copy(z = z.first - 1..<z.last)
 
-private fun safeBricks(bricks: List<Brick>): Int {
-    // sorted list of settled bricks
-    // bricks are sorted by their highest z value first, then by other values to serve as tiebreakers
-    // we only use the fact that they are sorted by highest z value below
-    val settledBricks = TreeSet<Brick> { a, b ->
+private class Solution(bricks: List<Brick>) {
+    private val settledBricks = TreeSet<Brick> { a, b ->
         fun Brick.attrList() = listOf(z.last, z.first, y.last, y.first, x.last, x.first)
 
         a.attrList()
@@ -32,51 +30,71 @@ private fun safeBricks(bricks: List<Brick>): Int {
             .firstOrNull { it != 0 }
             ?: 0
     }
-    // bricks that cannot safely be removed
-    val unsafeBricks = mutableSetOf<Brick>()
-    bricks
-        .sortedBy { it.z.first }
-        .forEach { brick ->
-            var prevStep: Brick? = null
-            var fallingBrick = brick
-            val hitBricks = mutableSetOf<Brick>()
-            while (fallingBrick.z.first > 0 && hitBricks.isEmpty()) {
-                prevStep = fallingBrick
-                fallingBrick = fallingBrick.fall()
-                // iterate through settled bricks in sorted order, highest to lowest
-                val settledBricksIter = settledBricks.descendingIterator()
-                var nextBrick = if (settledBricksIter.hasNext()) settledBricksIter.next() else null
-                // stop iteration when the bricks are below the falling brick
-                while (nextBrick != null && nextBrick.z.last >= fallingBrick.z.first) {
-                    if (nextBrick.intersect(fallingBrick) != null) {
-                        hitBricks.add(nextBrick)
+    private val restsOn: Map<Brick, Set<Brick>>
+    private val supports: Map<Brick, Set<Brick>>
+
+
+    init {
+        val _restsOn = mutableMapOf<Brick, MutableSet<Brick>>()
+        val _supports: MutableMap<Brick, MutableSet<Brick>> by mapWithPutDefault { mutableSetOf() }
+
+        bricks
+            .sortedBy { it.z.first }
+            .forEach { brick ->
+                var prevStep: Brick? = null
+                var fallingBrick = brick
+                val hitBricks = mutableSetOf<Brick>()
+                while (fallingBrick.z.first > 0 && hitBricks.isEmpty()) {
+                    prevStep = fallingBrick
+                    fallingBrick = fallingBrick.fall()
+                    // iterate through settled bricks in sorted order, highest to lowest
+                    val settledBricksIter = settledBricks.descendingIterator()
+                    var settledBrick = if (settledBricksIter.hasNext()) settledBricksIter.next() else null
+                    // stop iteration when the bricks are below the falling brick
+                    while (settledBrick != null && settledBrick.z.last >= fallingBrick.z.first) {
+                        if (settledBrick.intersect(fallingBrick) != null) {
+                            hitBricks.add(settledBrick)
+                        }
+                        settledBrick = if (settledBricksIter.hasNext()) settledBricksIter.next() else null
                     }
-                    nextBrick = if (settledBricksIter.hasNext()) settledBricksIter.next() else null
+                }
+
+                if (prevStep == null) {
+                    throw RuntimeException("Brick $brick is in impossible position and cannot fall")
+                }
+                settledBricks.add(prevStep)
+                _restsOn[prevStep] = hitBricks
+                hitBricks.forEach { hitBrick ->
+                    _supports.getValue(hitBrick).add(prevStep)
                 }
             }
 
-            // count how many bricks this one rests on
-            // if only one, that one is unsafe to remove
-            hitBricks
-                .takeIf { it.size == 1 }
-                ?.also { unsafeBricks.add(it.first()) }
-            if (prevStep == null) {
-                throw RuntimeException("Brick $brick is in impossible position and cannot fall")
-            }
-            settledBricks.add(prevStep)
-        }
+        restsOn = _restsOn
+        supports = _supports
+    }
 
-    return bricks.size - unsafeBricks.size
+    fun safeBricks(): Int {
+        val unsafeBricks = restsOn
+            .values
+            .mapNotNullTo(mutableSetOf()) {
+                if (it.size == 1) it.first()
+                else null
+            }
+
+        return settledBricks.size - unsafeBricks.size
+    }
 }
 
 fun main() = timed {
-    val bricks = (DATAPATH / "2023/day22.txt").useLines { lines ->
-        lines.mapTo(mutableListOf()) { line ->
-            val (from, to) = line.split("~")
-            val (fromX, fromY, fromZ) = from.split(",").map(String::toInt)
-            val (toX, toY, toZ) = to.split(",").map(String::toInt)
-            Brick(fromX..toX, fromY..toY, fromZ..toZ)
-        }
+    val solution = (DATAPATH / "2023/day22.txt").useLines { lines ->
+        lines
+            .mapTo(mutableListOf()) { line ->
+                val (from, to) = line.split("~")
+                val (fromX, fromY, fromZ) = from.split(",").map(String::toInt)
+                val (toX, toY, toZ) = to.split(",").map(String::toInt)
+                Brick(fromX..toX, fromY..toY, fromZ..toZ)
+            }
+            .let(::Solution)
     }
-    println("Part one: ${safeBricks(bricks)}")
+    println("Part one: ${solution.safeBricks()}")
 }
