@@ -59,3 +59,8 @@ fun <T> Grid<T>.pointOfFirst(predicate: (T) -> Boolean): Point =
     pointIndices.first { p ->
         predicate(this[p])
     }
+
+fun <T> Grid<T>.pointOfLast(predicate: (T) -> Boolean): Point =
+    pointIndices.last { p ->
+        predicate(this[p])
+    }
