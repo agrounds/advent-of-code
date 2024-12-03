@@ -3,7 +3,7 @@ package com.groundsfam.advent.y2024.d03
 import com.groundsfam.advent.DATAPATH
 import com.groundsfam.advent.timed
 import kotlin.io.path.div
-import kotlin.io.path.useLines
+import kotlin.io.path.readText
 
 fun runMemory(memory: String, withConditionals: Boolean): Int {
     var mulEnabled = true
@@ -33,9 +33,7 @@ fun runMemory(memory: String, withConditionals: Boolean): Int {
 }
 
 fun main() = timed {
-    val memory = (DATAPATH / "2024/day03.txt").useLines { lines ->
-        lines.toList().joinToString("")
-    }
+    val memory = (DATAPATH / "2024/day03.txt").readText()
     println("Part one: ${runMemory(memory, false)}")
     println("Part two: ${runMemory(memory, true)}")
 }
