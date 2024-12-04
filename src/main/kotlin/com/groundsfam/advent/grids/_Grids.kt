@@ -32,6 +32,12 @@ inline fun <T, R> Grid<T>.mapIndexed(transform: (Point, T) -> R): Grid<R> = Grid
     }
 )
 
+inline fun <T> Grid<T>.forEachIndexed(action: (p: Point, T) -> Unit) {
+    this.pointIndices.forEach { p ->
+        action(p, this[p])
+    }
+}
+
 fun <T> Grid<T>.count(predicate: (T) -> Boolean): Int =
     this.sumOf { row ->
         row.count(predicate)

@@ -8,6 +8,9 @@ data class Point(val x: Int, val y: Int) {
     operator fun minus(other: Point) = Point(x - other.x, y - other.y)
     operator fun times(factor: Int) = Point(x * factor, y * factor)
 }
+
+operator fun Int.times(p: Point) = p * this
+
 // north, south, east, west, and diagonals
 val Point.n get() = Point(x, y - 1)
 val Point.s get() = Point(x, y + 1)
