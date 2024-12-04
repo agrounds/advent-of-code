@@ -2,11 +2,11 @@ package com.groundsfam.advent.y2021.d11
 
 import com.groundsfam.advent.DATAPATH
 import com.groundsfam.advent.grids.Grid
-import com.groundsfam.advent.grids.containsPoint
+import com.groundsfam.advent.grids.contains
 import com.groundsfam.advent.grids.copy
+import com.groundsfam.advent.grids.readGrid
 import com.groundsfam.advent.points.Point
 import com.groundsfam.advent.points.adjacents
-import com.groundsfam.advent.grids.readGrid
 import com.groundsfam.advent.timed
 import kotlin.io.path.div
 
@@ -40,7 +40,7 @@ class Solution(octopuses: Grid<Int>) {
                 // perform flash
                 flashes++
                 p.adjacents()
-                    .filter(grid::containsPoint)
+                    .filter { it in grid }
                     .forEach(::increaseEnergy)
                 didFlash.add(p)
             }

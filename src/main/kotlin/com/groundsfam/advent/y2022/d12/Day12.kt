@@ -2,21 +2,17 @@ package com.groundsfam.advent.y2022.d12
 
 import com.groundsfam.advent.DATAPATH
 import com.groundsfam.advent.grids.Grid
-import com.groundsfam.advent.grids.containsPoint
+import com.groundsfam.advent.grids.maybeGet
+import com.groundsfam.advent.grids.toGrid
 import com.groundsfam.advent.points.Point
 import com.groundsfam.advent.points.down
 import com.groundsfam.advent.points.left
 import com.groundsfam.advent.points.right
 import com.groundsfam.advent.points.up
 import com.groundsfam.advent.timed
-import com.groundsfam.advent.grids.toGrid
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
-
-fun Grid<Int>.height(p: Point): Int? =
-    if (this.containsPoint(p)) this[p]
-    else null
 
 // Find min distance path from `start` to any given target point via Dikjstra's algorithm
 class PartOneSolver(private val grid: Grid<Int>, start: Point) {
@@ -28,8 +24,8 @@ class PartOneSolver(private val grid: Grid<Int>, start: Point) {
     private fun neighbors(point: Point): List<Point> =
         listOf(point.left, point.right, point.up, point.down)
             .filter { neighbor ->
-                grid.height(neighbor).let {
-                    it != null && it <= grid.height(point)!! + 1
+                grid.maybeGet(neighbor).let {
+                    it != null && it <= grid[point] + 1
                 }
             }
 
@@ -67,8 +63,8 @@ class PartTwoSolver(private val grid: Grid<Int>, end: Point) {
     private fun neighbors(point: Point): List<Point> =
         listOf(point.left, point.right, point.up, point.down)
             .filter { neighbor ->
-                grid.height(neighbor).let {
-                    it != null && it >= grid.height(point)!! - 1
+                grid.maybeGet(neighbor).let {
+                    it != null && it >= grid[point] - 1
                 }
             }
 
@@ -77,7 +73,7 @@ class PartTwoSolver(private val grid: Grid<Int>, end: Point) {
     fun minPath(startingHeight: Int): Int? {
         while (toVisit.isNotEmpty()) {
             val next = toVisit.minByOrNull(::currDistance)!!
-            if (grid.height(next) == startingHeight)
+            if (grid.maybeGet(next) == startingHeight)
                 return currDistance(next)
 
             toVisit.remove(next)

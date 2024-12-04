@@ -2,13 +2,13 @@ package com.groundsfam.advent.y2021.d09
 
 import com.groundsfam.advent.DATAPATH
 import com.groundsfam.advent.grids.Grid
-import com.groundsfam.advent.grids.containsPoint
+import com.groundsfam.advent.grids.contains
+import com.groundsfam.advent.grids.readGrid
 import com.groundsfam.advent.points.Point
 import com.groundsfam.advent.points.down
 import com.groundsfam.advent.points.left
 import com.groundsfam.advent.points.right
 import com.groundsfam.advent.points.up
-import com.groundsfam.advent.grids.readGrid
 import com.groundsfam.advent.timed
 import kotlin.io.path.div
 
@@ -16,7 +16,7 @@ import kotlin.io.path.div
 class Solution(private val heightMap: Grid<Int>) {
     private val lowPoints = heightMap.pointIndices.filter { p ->
         listOf(p.left, p.right, p.up, p.down).all { n ->
-            !heightMap.containsPoint(n) || heightMap[n] > heightMap[p]
+            n !in heightMap || heightMap[n] > heightMap[p]
         }
     }
 
@@ -35,7 +35,7 @@ class Solution(private val heightMap: Grid<Int>) {
             if (visited.add(p)) {
                 basinSize++
                 listOf(p.left, p.right, p.up, p.down).forEach { n ->
-                    if (heightMap.containsPoint(n) && heightMap[n] in (heightMap[p] + 1 until 9)) {
+                    if (n in heightMap && heightMap[n] in (heightMap[p] + 1 until 9)) {
                         queue.add(n)
                     }
                 }

@@ -7,7 +7,7 @@ import com.groundsfam.advent.Direction.LEFT
 import com.groundsfam.advent.Direction.RIGHT
 import com.groundsfam.advent.Direction.UP
 import com.groundsfam.advent.grids.Grid
-import com.groundsfam.advent.grids.containsPoint
+import com.groundsfam.advent.grids.contains
 import com.groundsfam.advent.grids.count
 import com.groundsfam.advent.grids.readGrid
 import com.groundsfam.advent.points.Point
@@ -52,7 +52,7 @@ private fun findEnergizedTiles(grid: Grid<Char>, start: LightBeam): Int {
 
     while (queue.isNotEmpty()) {
         var (position, direction) = queue.removeFirst()
-        while (grid.containsPoint(position) && energized[position].add(direction)) {
+        while (position in grid && energized[position].add(direction)) {
             val nextDirs = nextDirections(grid[position], direction)
             if (nextDirs.size == 1) {
                 val dir = nextDirs[0]

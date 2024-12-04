@@ -8,7 +8,7 @@ import com.groundsfam.advent.Direction.RIGHT
 import com.groundsfam.advent.Direction.UP
 import com.groundsfam.advent.grids.Grid
 import com.groundsfam.advent.points.go
-import com.groundsfam.advent.grids.containsPoint
+import com.groundsfam.advent.grids.contains
 import com.groundsfam.advent.grids.map
 import com.groundsfam.advent.points.Point
 import com.groundsfam.advent.timed
@@ -50,7 +50,7 @@ class Solution(private val start: Point, private val pipes: Grid<Pipe>) {
         var prevDir: Direction = Direction.entries
             .filter { dir ->
                 val adjacent = start.go(dir)
-                pipes.containsPoint(adjacent) && -dir in pipes[adjacent]
+                adjacent in pipes && -dir in pipes[adjacent]
             }.let { dirs ->
                 // choose vertical direction if possible
                 dirs.firstOrNull { it.isVertical() } ?: dirs.first()

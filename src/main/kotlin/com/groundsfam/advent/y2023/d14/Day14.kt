@@ -8,10 +8,10 @@ import com.groundsfam.advent.Direction.RIGHT
 import com.groundsfam.advent.Direction.UP
 import com.groundsfam.advent.grids.Grid
 import com.groundsfam.advent.grids.copy
-import com.groundsfam.advent.points.go
-import com.groundsfam.advent.grids.containsPoint
-import com.groundsfam.advent.points.Point
+import com.groundsfam.advent.grids.maybeGet
 import com.groundsfam.advent.grids.readGrid
+import com.groundsfam.advent.points.Point
+import com.groundsfam.advent.points.go
 import com.groundsfam.advent.timed
 import kotlin.io.path.div
 
@@ -54,7 +54,7 @@ private class Solution(private val originalPlatform: Grid<Char>) {
                 // to will be the point that p slides north to
                 var to = p
                 var toNext = to.go(tiltDir)
-                while (platform.containsPoint(toNext) && platform[toNext] == '.') {
+                while (platform.maybeGet(toNext) == '.') {
                     to = toNext
                     toNext = to.go(tiltDir)
                 }
