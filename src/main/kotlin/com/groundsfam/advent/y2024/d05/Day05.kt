@@ -5,20 +5,20 @@ import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.useLines
 
-class Solution(private val rules: Map<Int, MutableSet<Int>>) {
-    fun isSorted(update: List<Int>): Boolean {
-        update.forEachIndexed { i, a ->
-            val afterA = rules[a]
-            if (afterA != null) {
-                (0 until i).forEach { j ->
-                    if (update[j] in afterA) {
-                        return false
-                    }
-                }
+fun sort(update: List<Int>, rules: Map<Int, Set<Int>>): List<Int> {
+    val ret = update.toMutableList()
+
+    ret.indices.forEach { i ->
+        (i + 1 until ret.size).forEach { j ->
+            if (rules[ret[j]]?.let { ret[i] in it } == true) {
+                val tmp = ret[i]
+                ret[i] = ret[j]
+                ret[j] = tmp
             }
         }
-        return true
     }
+
+    return ret
 }
 
 fun main() = timed {
@@ -44,9 +44,18 @@ fun main() = timed {
             }
         }
     }
-    val solution = Solution(rules)
-    updates
-        .filter(solution::isSorted)
-        .sumOf { it[it.size / 2] }
-        .also { println("Part one: $it") }
+
+    var sortedSum = 0
+    var unsortedSum = 0
+    updates.forEach { update ->
+        val sorted = sort(update, rules)
+        val mid = sorted[sorted.size / 2]
+        if (update == sorted) {
+            sortedSum += mid
+        } else {
+            unsortedSum += mid
+        }
+    }
+    println("Part one: $sortedSum")
+    println("Part one: $unsortedSum")
 }
