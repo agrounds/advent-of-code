@@ -9,7 +9,17 @@ import kotlin.math.max
 
 data class Stats(val hitPoints: Int, val damage: Int, val armor: Int)
 data class Equipment(val cost: Int, val damage: Int, val armor: Int)
-data class AllEquipment(val weapon: Equipment, val armor: Equipment, val leftRing: Equipment, val rightRing: Equipment) {
+// indexes of equipment from their lists
+data class AllEquipment(
+    val weaponIdx: Int,
+    val armorIdx: Int,
+    val leftRingIdx: Int,
+    val rightRingIdx: Int
+) {
+    val weapon = weapons[weaponIdx]
+    val armor = armorList[armorIdx]
+    val leftRing = rings[leftRingIdx]
+    val rightRing = rings[rightRingIdx]
     val cost = weapon.cost + armor.cost + leftRing.cost + rightRing.cost
 }
 
@@ -28,6 +38,7 @@ val weapons = listOf(
     Equipment(74, 8, 0),
 )
 val armorList = listOf(
+    Equipment(0, 0, 0),
     Equipment(13, 0, 1),
     Equipment(31, 0, 2),
     Equipment(53, 0, 3),
@@ -35,6 +46,8 @@ val armorList = listOf(
     Equipment(102, 0, 5),
 )
 val rings = listOf(
+    Equipment(0, 0, 0),
+    Equipment(0, 0, 0),
     Equipment(20, 0, 1),
     Equipment(25, 1, 0),
     Equipment(40, 0, 2),
@@ -44,10 +57,17 @@ val rings = listOf(
 )
 val empty = Equipment(0, 0, 0)
 
-fun minCostSurvive(self: Stats, boss: Stats): Int {
+// either min cost to survive or max cost to lose
+fun extremeCost(self: Stats, boss: Stats, survive: Boolean): Int {
     val visited = mutableSetOf<AllEquipment>()
-    val queue = PriorityQueue<AllEquipment>(compareBy { it.cost })
-    queue.add(AllEquipment(empty, empty, empty, empty))
+    val initEquipment =
+        if (survive) AllEquipment(0, 0, 0, 0)
+        else AllEquipment(weapons.size - 1, armorList.size - 1, rings.size - 2, rings.size - 1)
+    val comparator: Comparator<AllEquipment> =
+        if (survive) compareBy { it.cost }
+        else compareByDescending { it.cost }
+    val queue = PriorityQueue(comparator)
+    queue.add(initEquipment)
 
     while (queue.isNotEmpty()) {
         val equipment = queue.poll()
@@ -55,27 +75,32 @@ fun minCostSurvive(self: Stats, boss: Stats): Int {
             continue
         }
 
-        if (willSurvive(self.withEquipment(equipment), boss)) {
+        if (willSurvive(self.withEquipment(equipment), boss) == survive) {
             return equipment.cost
         }
 
-        val (weapon, armor, leftRing, rightRing) = equipment
-        weapons.firstOrNull { it.cost > weapon.cost }?.also {
-            queue.add(equipment.copy(weapon = it))
+        val (weaponIdx, armorIdx, leftRingIdx, rightRingIdx) = equipment
+        val dx = if (survive) 1 else -1
+        if (weaponIdx + dx in weapons.indices) {
+            queue.add(equipment.copy(weaponIdx = weaponIdx + dx))
         }
-        armorList.firstOrNull { it.cost > armor.cost }?.also {
-            queue.add(equipment.copy(armor = it))
+        if (armorIdx + dx in armorList.indices) {
+            queue.add(equipment.copy(armorIdx = armorIdx + dx))
         }
-        rings.firstOrNull { it.cost > leftRing.cost }?.also {
-            queue.add(equipment.copy(leftRing = it))
+        if (leftRingIdx + dx in rings.indices) {
+            queue.add(equipment.copy(leftRingIdx = leftRingIdx + dx))
         }
-        // ensure right ring always costs less than left ring
-        rings.firstOrNull { it.cost in (rightRing.cost + 1) until leftRing.cost }?.also {
-            queue.add(equipment.copy(rightRing = it))
+        // ensure right ring always costs less/more than left ring
+        if (rightRingIdx + dx in rings.indices && rightRingIdx + dx != leftRingIdx) {
+            queue.add(equipment.copy(rightRingIdx = rightRingIdx + dx))
         }
     }
 
-    throw RuntimeException("Cannot survive with any equipment")
+    if (survive) {
+        throw RuntimeException("Cannot survive with any equipment")
+    } else {
+        throw RuntimeException("Cannot lose with any equipment")
+    }
 }
 
 fun willSurvive(self: Stats, boss: Stats): Boolean {
@@ -92,5 +117,6 @@ fun main() = timed {
         val (hp, d, a) = lines.mapTo(mutableListOf()) { it.split(" ").last().toInt() }
         Stats(hp, d, a)
     }
-    println("Part one: ${minCostSurvive(self, boss)}")
+    println("Part one: ${extremeCost(self, boss, true)}")
+    println("Part two: ${extremeCost(self, boss, false)}")
 }
