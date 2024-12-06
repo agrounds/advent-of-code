@@ -29,7 +29,7 @@ class Solution(private val grid: Grid<Char>, private val start: Point) {
         }
     }
 
-    fun guardPath(): Int {
+    fun guardPath(): Set<Point> {
         // if d is in visited[p], then we have previously been at p going direction d
         val visited = mutableSetOf<Point>()
         var pos = start
@@ -44,7 +44,7 @@ class Solution(private val grid: Grid<Char>, private val start: Point) {
             pos = pos.go(dir)
         }
 
-        return visited.size
+        return visited
     }
 
     private fun guardLoops(): Boolean {
@@ -126,8 +126,8 @@ fun main() = timed {
     val start = grid.pointOfFirst { it == '^' }
     grid[start] = '.'
     val solution = Solution(grid, start)
-    println("Part one: ${solution.guardPath()}")
-    grid.pointIndices
+    solution.guardPath()
+        .also { println("Part one: ${it.size}") }
         .count(solution::causesLoop)
         .also { println("Part two: $it") }
 }
