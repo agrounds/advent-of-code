@@ -39,9 +39,9 @@ fun Direction.asPoint() = when (this) {
 }
 
 fun Char.toDirection(): Direction? = when (this) {
-    '^' -> Direction.UP
-    'v' -> Direction.DOWN
-    '>' -> Direction.RIGHT
-    '<' -> Direction.LEFT
+    '^', 'U' -> Direction.UP
+    'v', 'D' -> Direction.DOWN
+    '>', 'R' -> Direction.RIGHT
+    '<', 'L' -> Direction.LEFT
     else -> null
 }
