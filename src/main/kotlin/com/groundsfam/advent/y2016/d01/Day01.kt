@@ -30,8 +30,8 @@ fun followDirections(directions: List<String>, partTwo: Boolean): Int {
 fun main() = timed {
     val directions = (DATAPATH / "2016/day01.txt")
         .readText()
-        .split(""",?\s""".toRegex())
-        .filter(String::isNotBlank)
+        .trim()
+        .split(", ")
     println("Part one: ${followDirections(directions, false)}")
     println("Part two: ${followDirections(directions, true)}")
 }
