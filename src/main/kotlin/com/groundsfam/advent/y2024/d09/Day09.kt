@@ -13,7 +13,7 @@ fun defragmentDiskOne(diskMap: List<Int>): Long {
     // index of diskMap entry
     var i = 0
     // index of the next block on disk to fill
-    var blockIdx = 0
+    var blockIdx = 0L
     // start from last fileId
     var fileId = (diskMap.size - 1) / 2
     // number of blocks of file #fileId already relocated
