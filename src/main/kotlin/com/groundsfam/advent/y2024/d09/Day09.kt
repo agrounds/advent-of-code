@@ -2,6 +2,7 @@ package com.groundsfam.advent.y2024.d09
 
 import com.groundsfam.advent.DATAPATH
 import com.groundsfam.advent.timed
+import java.util.PriorityQueue
 import kotlin.io.path.div
 import kotlin.io.path.readText
 import kotlin.math.min
@@ -49,7 +50,7 @@ fun defragmentDiskTwo(diskMap: List<Int>): Long {
     // mapping from fileId to position of first block on disk
     val filePositions = IntArray((diskMap.size + 1) / 2)
     // mapping from length of space to positions of spaces of that length
-    val spaces = (1..9).associateWithTo(mutableMapOf<Int, MutableSet<Int>>()) { mutableSetOf() }
+    val spaces = (1..9).associateWithTo(mutableMapOf<Int, PriorityQueue<Int>>()) { PriorityQueue() }
 
     var pos = 0
     diskMap.forEachIndexed { i, len ->
@@ -72,16 +73,15 @@ fun defragmentDiskTwo(diskMap: List<Int>): Long {
         var minSpaceLen: Int? = null
         var minSpacePos: Int? = null
         (fileLen..9).forEach { len ->
-            spaces[len]?.forEach { pos ->
-                if (pos < filePositions[fileId] && minSpacePos?.let { it < pos } != true) {
-                    minSpaceLen = len
-                    minSpacePos = min(pos, minSpacePos ?: pos)
-                }
+            val spacePos = spaces[len]?.takeIf { it.isNotEmpty() }?.peek()
+            if (spacePos != null && spacePos < filePositions[fileId] && minSpacePos?.let { it < spacePos } != true) {
+                minSpaceLen = len
+                minSpacePos = min(spacePos, minSpacePos ?: spacePos)
             }
         }
         if (minSpaceLen != null) {
             filePositions[fileId] = minSpacePos!!
-            spaces[minSpaceLen]!!.remove(minSpacePos)
+            spaces[minSpaceLen]!!.poll()
             // length of this space now that we've moved the file here
             val newSpaceLen = minSpaceLen!! - fileLen
             if (newSpaceLen > 0) {
