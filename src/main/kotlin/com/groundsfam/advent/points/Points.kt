@@ -7,6 +7,7 @@ data class Point(val x: Int, val y: Int) {
     operator fun plus(other: Point) = Point(x + other.x, y + other.y)
     operator fun minus(other: Point) = Point(x - other.x, y - other.y)
     operator fun times(factor: Int) = Point(x * factor, y * factor)
+    operator fun div(factor: Int) = Point(x / factor, y / factor)
 }
 
 operator fun Int.times(p: Point) = p * this
