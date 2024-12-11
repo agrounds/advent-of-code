@@ -8,12 +8,65 @@ import com.groundsfam.advent.grids.pointOfFirst
 import com.groundsfam.advent.grids.pointOfLast
 import com.groundsfam.advent.grids.readGrid
 import com.groundsfam.advent.points.Point
+import com.groundsfam.advent.points.adjacents
 import com.groundsfam.advent.points.go
+import com.groundsfam.advent.points.s
 import com.groundsfam.advent.timed
+import com.groundsfam.advent.toDirection
 import kotlin.io.path.div
 import kotlin.math.max
 
-class Solution(val grid: Grid<Char>) {
+fun partOne(grid: Grid<Char>): Int {
+    val start = grid.pointOfFirst { it == '.' }
+    val end = grid.pointOfLast { it == '.' }
+    var longest = 0
+
+    data class Walk(val position: Point, val visited: MutableSet<Point>)
+
+    val partialWalks = ArrayDeque<Walk>()
+    // to simplify things, start at the second position on the walk, which
+    // is always the point south of start
+    partialWalks.add(Walk(start.s, mutableSetOf(start)))
+
+    while (partialWalks.isNotEmpty()) {
+        val walk = partialWalks.removeFirst()
+        var position: Point? = walk.position
+        val visited = walk.visited
+
+        while (position != null && position != end) {
+            visited.add(position)
+            var next: Point? = null
+
+            position
+                .adjacents(diagonal = false)
+                .filter { p ->
+                    when {
+                        p in visited -> false
+                        grid[p] == '#' -> false
+                        grid[p].toDirection()?.let(p::go) == position -> false
+                        else -> true
+                    }
+                }
+                .forEach {
+                    if (next == null) {
+                        next = it
+                    } else {
+                        partialWalks.add(Walk(it, visited.toMutableSet()))
+                    }
+                }
+
+            position = next
+        }
+
+        if (position == end) {
+            longest = max(longest, visited.size)
+        }
+    }
+
+    return longest
+}
+
+class PartTwo(val grid: Grid<Char>) {
     val start = grid.pointOfFirst { it == '.' }
     val end = grid.pointOfLast { it == '.' }
     // for two fork-in-road points p, q, neighbors[p] contains q
@@ -108,7 +161,7 @@ class Solution(val grid: Grid<Char>) {
         this.distances = distances
     }
 
-    fun longestWalkPartTwo(): Int {
+    fun longestWalk(): Int {
         fun helper(p: Point, visited: Set<Point>): Int? =
             if (p == end) 0
             else {
@@ -127,8 +180,7 @@ class Solution(val grid: Grid<Char>) {
 }
 
 fun main() = timed {
-    val solution = (DATAPATH / "2023/day23.txt")
-        .readGrid()
-        .let(::Solution)
-    println("Part two: ${solution.longestWalkPartTwo()}")
+    val grid = (DATAPATH / "2023/day23.txt").readGrid()
+    println("Part one: ${partOne(grid)}")
+    println("Part two: ${PartTwo(grid).longestWalk()}")
 }
