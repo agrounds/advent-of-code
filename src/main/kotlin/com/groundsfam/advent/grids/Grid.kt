@@ -4,8 +4,8 @@ import com.groundsfam.advent.points.Point
 
 class Grid<T>(private val grid: MutableList<MutableList<T>> = mutableListOf()) : MutableList<MutableList<T>> by grid {
     constructor(numRows: Int, numCols: Int, init: (Point) -> T) : this(
-        (0 until numCols).mapTo(mutableListOf()) { y ->
-            (0 until numRows).mapTo(mutableListOf()) { x ->
+        (0 until numRows).mapTo(mutableListOf()) { y ->
+            (0 until numCols).mapTo(mutableListOf()) { x ->
                 init(Point(x, y))
             }
         }
