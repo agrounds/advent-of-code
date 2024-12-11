@@ -36,17 +36,13 @@ fun partOne(grid: Grid<Char>): Int {
         while (position != null && position != end) {
             visited.add(position)
             var next: Point? = null
+            val slopeDir = grid[position].toDirection()
+            val adjacentPoints =
+                if (slopeDir != null) listOf(position.go(slopeDir))
+                else position.adjacents(diagonal = false)
 
-            position
-                .adjacents(diagonal = false)
-                .filter { p ->
-                    when {
-                        p in visited -> false
-                        grid[p] == '#' -> false
-                        grid[p].toDirection()?.let(p::go) == position -> false
-                        else -> true
-                    }
-                }
+            adjacentPoints
+                .filter { it !in visited && grid[it] != '#' }
                 .forEach {
                     if (next == null) {
                         next = it
