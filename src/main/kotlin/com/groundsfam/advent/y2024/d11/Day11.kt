@@ -3,11 +3,8 @@ package com.groundsfam.advent.y2024.d11
 import com.groundsfam.advent.DATAPATH
 import com.groundsfam.advent.pow
 import com.groundsfam.advent.timed
-import kotlin.io.path.Path
-import kotlin.io.path.createDirectory
 import kotlin.io.path.div
 import kotlin.io.path.readText
-import kotlin.io.path.writeLines
 import kotlin.math.log10
 
 fun changeStone(stone: Long): List<Long> {
