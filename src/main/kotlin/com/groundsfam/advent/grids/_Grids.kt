@@ -43,23 +43,28 @@ fun <T> Grid<T>.count(predicate: (T) -> Boolean): Int =
         row.count(predicate)
     }
 
-fun Path.readGrid(): Grid<Char> =
-    this.useLines { lines ->
-        lines
-            .mapTo(mutableListOf()) {
-                it.toMutableList()
-            }
-            .let(::Grid)
-    }
+fun <T> Sequence<CharSequence>.parseGrid(transform: (Char) -> T): Grid<T> =
+    this
+        .mapTo(mutableListOf()) {
+            it.mapTo(mutableListOf(), transform)
+        }
+        .let(::Grid)
+
+fun <T> Iterable<CharSequence>.parseGrid(transform: (Char) -> T): Grid<T> =
+    this
+        .mapTo(mutableListOf()) {
+            it.mapTo(mutableListOf(), transform)
+        }
+        .let(::Grid)
+
+fun Iterable<CharSequence>.parseGrid(): Grid<Char> = this.parseGrid { it }
 
 fun <T> Path.readGrid(transform: (Char) -> T): Grid<T> =
     this.useLines { lines ->
-        lines
-            .mapTo(mutableListOf()) {
-                it.mapTo(mutableListOf(), transform)
-            }
-            .let(::Grid)
+        lines.parseGrid(transform)
     }
+
+fun Path.readGrid(): Grid<Char> = this.readGrid { it }
 
 fun <T> Grid<T>.pointOfFirst(predicate: (T) -> Boolean): Point =
     pointIndices.first { p ->
