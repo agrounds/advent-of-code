@@ -1,6 +1,5 @@
 package com.groundsfam.advent.y2019
 
-import com.groundsfam.advent.numDigits
 import com.groundsfam.advent.pow
 import java.nio.file.Path
 import kotlin.io.path.readText
@@ -11,7 +10,8 @@ fun Path.readProgram(): List<Int> = readText()
     .map(String::toInt)
 
 class IntCodeComputer(private val initProgram: List<Int>) {
-    val memory = initProgram.toMutableList()
+    val memory = initProgram.toIntArray()
+
     // instruction pointer
     private var ip = 0
 
@@ -37,28 +37,47 @@ class IntCodeComputer(private val initProgram: List<Int>) {
                     else -> throw RuntimeException("Invalid param mode $mode, instructionPointer=$ip")
                 }
 
+            fun getParam(i: Int): Int = memory[getParamLocation(i)]
+
             when (val op = num % 100) {
-                1 -> {
-                    val (a, b, dest) = (1..3).map(::getParamLocation)
-                    memory[dest] = memory[a] + memory[b]
+                1, 2 -> {
+                    val a = getParam(1)
+                    val b = getParam(2)
+                    memory[getParamLocation(3)] =
+                        if (op == 1) a + b
+                        else a * b
                     ip += 4
                 }
-                2 -> {
-                    val (a, b, dest) = (1..3).map(::getParamLocation)
-                    memory[dest] = memory[a] * memory[b]
-                    ip += 4
-                }
+
                 3 -> {
-                    val dest = getParamLocation(1)
-                    memory[dest] = input[inIdx]
-                    inIdx++
+                    memory[getParamLocation(1)] = input[inIdx++]
                     ip += 2
                 }
+
                 4 -> {
-                    val dest = getParamLocation(1)
-                    output.add(memory[dest])
+                    output.add(getParam(1))
                     ip += 2
                 }
+
+                5, 6 -> {
+                    val a = getParam(1)
+                    val b = getParam(2)
+                    if ((a == 0) == (op == 6)) {
+                        ip = b
+                    } else {
+                        ip += 3
+                    }
+                }
+
+                7, 8 -> {
+                    val a = getParam(1)
+                    val b = getParam(2)
+                    memory[getParamLocation(3)] =
+                        if ((op == 7 && a < b) || (op == 8 && a == b)) 1
+                        else 0
+                    ip += 4
+                }
+
                 else -> throw RuntimeException("Invalid operation $op, instructionPointer=$ip")
             }
         }

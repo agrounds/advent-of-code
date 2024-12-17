@@ -6,11 +6,13 @@ import com.groundsfam.advent.y2019.IntCodeComputer
 import com.groundsfam.advent.y2019.readProgram
 import kotlin.io.path.div
 
-fun runDiagnostics(computer: IntCodeComputer): Int =
-    computer.runProgram(listOf(1)).last()
+fun runDiagnostics(computer: IntCodeComputer, code: Int): Int =
+    computer.runProgram(listOf(code)).last()
 
 fun main() = timed {
     val computer = (DATAPATH / "2019/day05.txt").readProgram()
         .let(::IntCodeComputer)
-    println("Part one: ${runDiagnostics(computer)}")
+    println("Part one: ${runDiagnostics(computer, 1)}")
+    computer.reset()
+    println("Part two: ${runDiagnostics(computer, 5)}")
 }
