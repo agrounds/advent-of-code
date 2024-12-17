@@ -12,55 +12,49 @@ import kotlin.io.path.useLines
 import kotlin.math.abs
 
 data class PathPart(val direction: Direction, val distance: Int)
-data class Edge(val horizontal: Boolean, val d: Int, val range: IntRange)
+data class Edge(val direction: Direction, val d: Int, val range: IntRange, val prevSteps: Int) {
+    val horizontal = direction == Direction.LEFT || direction == Direction.RIGHT
+}
 
-// return point closest to (0, 0), if one exists, in the intersection of these edges
-// exclude the point (0, 0) itself
-fun Edge.intersect(that: Edge): Point? {
+// return set of points of intersection of the edges
+fun Edge.intersect(that: Edge): Set<Point> {
     if (this.horizontal == that.horizontal) {
-        if (this.d != that.d) return null
+        if (this.d != that.d) return emptySet()
+
         val a = this.d
         return this.range.rangeIntersect(that.range)?.let { intRange ->
-            val b = when {
-                intRange.first > 0 -> intRange.first
-                intRange.last < 0 -> intRange.last
-                a == 0 -> when {
-                    1 in intRange -> 1
-                    -1 in intRange -> -1
-                    else -> null
-                }
-                else -> 0
-            }
-            b?.let {
+            intRange.mapTo(mutableSetOf()) { b ->
                 if (horizontal) Point(b, a) else Point(a, b)
             }
-        }
+        } ?: emptySet()
     }
 
     if (this.d in that.range && that.d in this.range) {
         val intP =
             if (this.horizontal) Point(that.d, this.d)
             else Point(this.d, that.d)
-        return intP.takeIf { it != Point(0, 0) }
+        return setOf(intP)
     }
 
-    return null
+    return emptySet()
 }
 
-fun findIntersection(wire1: List<PathPart>, wire2: List<PathPart>): Int {
+fun findIntersection(wire1: List<PathPart>, wire2: List<PathPart>, partTwo: Boolean): Int {
     val edges = listOf(wire1, wire2).map { wire ->
         var p = Point(0, 0)
+        var steps = 0
         wire.map { (dir, dist) ->
             val nextP = p + dist * dir.asPoint()
 
             val edge = if (dir == Direction.UP || dir == Direction.DOWN) {
                 val (from, to) = listOf(p.y, nextP.y).sorted()
-                Edge(false, p.x, from..to)
+                Edge(dir, p.x, from..to, steps)
             } else {
                 val (from, to) = listOf(p.x, nextP.x).sorted()
-                Edge(true, p.y, from..to)
+                Edge(dir, p.y, from..to, steps)
             }
             p = nextP
+            steps += dist
             edge
         }
     }
@@ -68,8 +62,22 @@ fun findIntersection(wire1: List<PathPart>, wire2: List<PathPart>): Int {
     return edges[0].minOf { edge1 ->
         edges[1].minOf { edge2 ->
             edge1.intersect(edge2)
-                ?.let { (x, y) -> abs(x) + abs(y) }
-                ?: Int.MAX_VALUE
+                .filterNot { it == Point(0, 0) }
+                .minOfOrNull { (x, y) ->
+                    if (partTwo) {
+                        listOf(edge1, edge2).sumOf {
+                            val stepsToPoint = when (it.direction) {
+                                Direction.RIGHT -> x - it.range.first
+                                Direction.LEFT -> it.range.last - x
+                                Direction.DOWN -> y - it.range.first
+                                Direction.UP -> it.range.last - y
+                            }
+                            it.prevSteps + stepsToPoint
+                        }
+                    } else {
+                        abs(x) + abs(y)
+                    }
+                } ?: Int.MAX_VALUE
         }
     }
 }
@@ -82,5 +90,6 @@ fun main() = timed {
             }
         }
     }
-    println("Part one: ${findIntersection(wire1, wire2)}")
+    println("Part one: ${findIntersection(wire1, wire2, false)}")
+    println("Part two: ${findIntersection(wire1, wire2, true)}")
 }
