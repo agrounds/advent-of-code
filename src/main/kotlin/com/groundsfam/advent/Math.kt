@@ -1,5 +1,6 @@
 package com.groundsfam.advent
 
+import kotlin.math.log
 import kotlin.math.pow
 import kotlin.math.round
 
@@ -8,6 +9,10 @@ fun <T : Comparable<T>> max(a: T, b: T) = if (a >= b) a else b
 
 fun Int.pow(p: Int): Long = this.toDouble().pow(p).toLong()
 fun sqrt(n: Int): Int = round(kotlin.math.sqrt(n.toDouble())).toInt()
+fun numDigits(n: Int, base: Int = 10): Int =
+    numDigits(n.toLong(), base)
+fun numDigits(n: Long, base: Int = 10): Int =
+    log(n.toDouble(), base.toDouble()).toInt() + 1
 
 fun Collection<Long>.gcd(): Long =
     this.reduce(::gcd)

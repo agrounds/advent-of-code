@@ -1,15 +1,15 @@
 package com.groundsfam.advent.y2024.d11
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.numDigits
 import com.groundsfam.advent.pow
 import com.groundsfam.advent.timed
 import kotlin.io.path.div
 import kotlin.io.path.readText
-import kotlin.math.log10
 
 fun changeStone(stone: Long): List<Long> {
     if (stone == 0L) return listOf(1)
-    val numDigits = log10(stone.toDouble()).toInt() + 1
+    val numDigits = numDigits(stone)
     if (numDigits % 2 == 0) {
         val pow10 = 10.pow(numDigits / 2)
         return listOf(stone / pow10, stone % pow10)
