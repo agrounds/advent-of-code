@@ -18,13 +18,11 @@ fun runProgram(computer: IntCodeComputer, a: Int, b: Int): Int =
     }
 
 fun findInputs(computer: IntCodeComputer): Int =
-    computer.run {
-        (0..99).firstNotNullOf { a ->
-            val b = (0..99).firstOrNull { b ->
-                runProgram(computer, a, b) == TARGET
-            }
-            b?.let { 100 * a + b }
+    (0..99).firstNotNullOf { a ->
+        val b = (0..99).firstOrNull { b ->
+            runProgram(computer, a, b) == TARGET
         }
+        b?.let { 100 * a + b }
     }
 
 fun main() = timed {
