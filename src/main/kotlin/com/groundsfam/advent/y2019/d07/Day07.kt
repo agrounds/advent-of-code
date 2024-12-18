@@ -9,15 +9,15 @@ import com.groundsfam.advent.y2019.readProgram
 import kotlin.io.path.div
 import kotlin.math.max
 
-fun maxThrusterSignal(program: List<Int>, partTwo: Boolean): Int {
+fun maxThrusterSignal(program: List<Long>, partTwo: Boolean): Long {
     val computers = Array(5) { IntCodeComputer(program) }
-    var maxSignal = 0
+    var maxSignal: Long = 0
     val phaseSettings =
-        if (partTwo) (5..9).toList()
-        else (0..4).toList()
+        if (partTwo) (5L..9L).toList()
+        else (0L..4L).toList()
 
     generatePermutations(phaseSettings).forEach { nums ->
-        var output = 0
+        var output: Long = 0
 
         computers.forEachIndexed { i, computer ->
             computer.reset()

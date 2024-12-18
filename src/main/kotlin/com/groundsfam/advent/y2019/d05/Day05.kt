@@ -6,7 +6,7 @@ import com.groundsfam.advent.y2019.IntCodeComputer
 import com.groundsfam.advent.y2019.readProgram
 import kotlin.io.path.div
 
-fun runDiagnostics(computer: IntCodeComputer, code: Int): Int {
+fun runDiagnostics(computer: IntCodeComputer, code: Long): Long {
     computer.sendInput(code)
     computer.runProgram()
     return computer.getAllOutput().last()

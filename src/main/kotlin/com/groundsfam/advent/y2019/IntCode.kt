@@ -5,10 +5,10 @@ import com.groundsfam.advent.y2019.IntCodeState.*
 import java.nio.file.Path
 import kotlin.io.path.readText
 
-fun Path.readProgram(): List<Int> = readText()
+fun Path.readProgram(): List<Long> = readText()
     .trim()
     .split(",")
-    .map(String::toInt)
+    .map(String::toLong)
 
 enum class IntCodeState {
     NOT_STARTED,
@@ -17,49 +17,56 @@ enum class IntCodeState {
     FINISHED,
 }
 
-class IntCodeComputer(private val initProgram: List<Int>) {
-    val memory = initProgram.toIntArray()
+class IntCodeComputer(private val initProgram: List<Long>) {
+    val memory = mutableMapOf<Long, Long>()
 
     // instruction pointer
-    private var ip = 0
+    private var ip: Long = 0
+    private var relativeBase: Long = 0
     var state: IntCodeState = NOT_STARTED
         private set
-    private val input = ArrayDeque<Int>()
-    private val output = ArrayDeque<Int>()
+    private val input = ArrayDeque<Long>()
+    private val output = ArrayDeque<Long>()
+
+    init {
+        reset()
+    }
 
     fun reset() {
         initProgram.forEachIndexed { i, n ->
-            memory[i] = n
+            memory[i.toLong()] = n
         }
         ip = 0
+        relativeBase = 0
         state = NOT_STARTED
         input.clear()
         output.clear()
     }
 
     // 1-indexed params
-    private fun getParamLocation(num: Int, i: Int): Int =
-        when (val mode = (num / 10.pow(1 + i)).toInt() % 10) {
-            0 -> memory[ip + i]
-            1 -> ip + i
+    private fun getParamLocation(num: Long, i: Int): Long =
+        when (val mode = (num / 10.pow(1 + i)) % 10) {
+            0L -> memory[ip + i]!!
+            1L -> ip + i
+            2L -> memory[ip + i]!! + relativeBase
             else -> throw RuntimeException("Invalid param mode $mode, instructionPointer=$ip")
         }
 
-    private fun getParam(num: Int, i: Int): Int = memory[getParamLocation(num, i)]
+    private fun getParam(num: Long, i: Int): Long = memory[getParamLocation(num, i)]!!
 
-    fun sendInput(num: Int) {
+    fun sendInput(num: Long) {
         input.add(num)
     }
 
-    fun sendInput(nums: Iterable<Int>) {
+    fun sendInput(nums: Iterable<Long>) {
         input.addAll(nums)
     }
 
-    fun getOutput(): Int? =
+    fun getOutput(): Long? =
         if (output.isEmpty()) null
         else output.removeFirst()
 
-    fun getAllOutput(): List<Int> =
+    fun getAllOutput(): List<Long> =
         output.toList()
             .also { output.clear() }
 
@@ -70,9 +77,9 @@ class IntCodeComputer(private val initProgram: List<Int>) {
         state = RUNNING
 
         while (state == RUNNING) {
-            val num = memory[ip]
+            val num = memory[ip]!!
 
-            when (val op = num % 100) {
+            when (val op = (num % 100).toInt()) {
                 1, 2 -> {
                     val a = getParam(num, 1)
                     val b = getParam(num, 2)
@@ -99,7 +106,7 @@ class IntCodeComputer(private val initProgram: List<Int>) {
                 5, 6 -> {
                     val a = getParam(num, 1)
                     val b = getParam(num, 2)
-                    if ((a == 0) == (op == 6)) {
+                    if ((a == 0L) == (op == 6)) {
                         ip = b
                     } else {
                         ip += 3
@@ -113,6 +120,11 @@ class IntCodeComputer(private val initProgram: List<Int>) {
                         if ((op == 7 && a < b) || (op == 8 && a == b)) 1
                         else 0
                     ip += 4
+                }
+
+                9 -> {
+                    relativeBase += getParam(num, 1)
+                    ip += 2
                 }
 
                 99 -> {
