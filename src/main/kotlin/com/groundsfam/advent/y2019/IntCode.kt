@@ -52,7 +52,8 @@ class IntCodeComputer(private val initProgram: List<Long>) {
             else -> throw RuntimeException("Invalid param mode $mode, instructionPointer=$ip")
         }
 
-    private fun getParam(num: Long, i: Int): Long = memory[getParamLocation(num, i)]!!
+    private fun getParam(num: Long, i: Int): Long =
+        memory[getParamLocation(num, i)] ?: 0
 
     fun sendInput(num: Long) {
         input.add(num)
