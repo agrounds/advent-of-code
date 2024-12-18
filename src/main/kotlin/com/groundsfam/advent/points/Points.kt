@@ -51,3 +51,10 @@ fun Point3.adjacents(): List<Point3> = listOf(
     Point3(0, 0, 1) + this,
     Point3(0, 0, -1) + this,
 )
+
+operator fun Point3.get(i: Int) = when (i) {
+    0 -> x
+    1 -> y
+    2 -> z
+    else -> throw RuntimeException("Cannot get index $i of $this")
+}
