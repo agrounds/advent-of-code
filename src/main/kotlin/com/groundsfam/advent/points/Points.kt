@@ -40,6 +40,7 @@ fun Iterable<Point>.sum(): Point = this.fold(Point(0, 0)) { sum, point ->
 
 data class Point3(val x: Int, val y: Int, val z: Int) {
     operator fun plus(other: Point3) = Point3(x + other.x, y + other.y, z + other.z)
+    operator fun minus(other: Point3) = Point3(x - other.x, y - other.y, z - other.z)
 }
 
 fun Point3.adjacents(): List<Point3> = listOf(
