@@ -22,7 +22,8 @@ class IntCodeComputer(private val initProgram: List<Int>) {
 
     // instruction pointer
     private var ip = 0
-    private var state: IntCodeState = NOT_STARTED
+    var state: IntCodeState = NOT_STARTED
+        private set
     private val input = ArrayDeque<Int>()
     private val output = ArrayDeque<Int>()
 
