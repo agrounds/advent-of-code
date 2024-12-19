@@ -13,5 +13,5 @@ fun timed(block: () -> Unit) {
     block()
 
     watch.stop()
-    println("Took ${watch.time}ms")
+    println("Took ${watch.duration.toMillis()}ms")
 }
