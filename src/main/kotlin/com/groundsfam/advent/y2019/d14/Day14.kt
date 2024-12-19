@@ -11,6 +11,7 @@ const val FUEL = "FUEL"
 const val ORE_LIMIT = 1_000_000_000_000
 
 data class Reaction(val inputs: Map<String, Int>, val output: String, val outputAmount: Int)
+
 fun parseReaction(line: String): Reaction {
     val (input, output) = line.split(" => ")
     val (outputAmount, outputName) = output.split(" ")
@@ -24,13 +25,11 @@ fun parseReaction(line: String): Reaction {
 fun createFuel(reactions: Map<String, Reaction>, numFuel: Long): Long {
     val required = mutableMapOf(FUEL to numFuel)
 
-    fun nextToMake(): String? =
-        required.firstNotNullOfOrNull { (c, n) ->
+    while (true) {
+        val toMake = required.firstNotNullOfOrNull { (c, n) ->
             c.takeIf { it != ORE && n > 0 }
-        }
+        } ?: break
 
-    var toMake = nextToMake()
-    while (toMake != null) {
         val requiredAmount = required[toMake]!!
         val (inputs, _, outputAmount) = reactions[toMake]!!
         val numReactions = (requiredAmount + outputAmount - 1) / outputAmount
@@ -39,16 +38,17 @@ fun createFuel(reactions: Map<String, Reaction>, numFuel: Long): Long {
         inputs.forEach { (c, n) ->
             required[c] = (required[c] ?: 0) + numReactions * n
         }
-        toMake = nextToMake()
     }
     return required[ORE]!!
 }
 
 fun createMaxFuel(reactions: Map<String, Reaction>): Long {
-    var a = 1L
-    // heuristic: assume naive amount of fuel (num ore / ore for 1 fuel)
-    // is not off by more than double
-    var b = (2 * ORE_LIMIT / createFuel(reactions, 1L)).toLong()
+    // we can create at least this much fuel by discarding
+    // leftover byproducts from making 1 fuel at a time
+    var a = ORE_LIMIT / createFuel(reactions, 1L)
+    // heuristic: assume our lower bound is not off by
+    // more than double
+    var b = 2 * a
 
     while (b - a > 1) {
         val mid = (a + b) / 2
