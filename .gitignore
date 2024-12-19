@@ -2,7 +2,3 @@
 target/
 profile.jfr
 .profileconfig.json
-
-# from diff2html
-package.json
-package-lock.json
