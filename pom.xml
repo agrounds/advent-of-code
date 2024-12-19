@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project>
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.groundsfam</groupId>
@@ -11,12 +9,21 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+        <!-- version of kotlin in the compiled artifact -->
+        <kotlin.version>2.1.0</kotlin.version>
+        <!-- tell the IntelliJ compiler what kotlin language version to use -->
+        <kotlin.compiler.languageVersion>2.1</kotlin.compiler.languageVersion>
+        <!-- tell the IntelliJ compiler what kotlin API version to use -->
+        <kotlin.compiler.apiVersion>2.1</kotlin.compiler.apiVersion>
+        <!-- tell the IntelliJ compiler what JVM version to target -->
+        <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
+        <!-- enable incremental compilation (experimental) -->
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
 
-        <kotlin.version>1.9.21</kotlin.version>
-        <kotlinx-serialization.version>1.6.1</kotlinx-serialization.version>
-        <apache-commons.version>3.14.0</apache-commons.version>
-        <kotest.version>5.8.0</kotest.version>
+        <!-- dependency versions -->
+        <kotlinx-serialization.version>1.7.3</kotlinx-serialization.version>
+        <apache-commons.version>3.17.0</apache-commons.version>
+        <kotest.version>5.9.1</kotest.version>
     </properties>
 
     <dependencies>
@@ -25,12 +32,7 @@
             <artifactId>kotlin-stdlib</artifactId>
             <version>${kotlin.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlinx</groupId>
-            <artifactId>kotlinx-serialization-core</artifactId>
-            <version>${kotlinx-serialization.version}</version>
-            <type>pom</type>
-        </dependency>
+        <!-- used in 2015 day 12 -->
         <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlinx-serialization-json</artifactId>
@@ -38,12 +40,12 @@
             <type>pom</type>
         </dependency>
 
+        <!-- for stopwatch, used to time solutions -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${apache-commons.version}</version>
         </dependency>
-
 
         <dependency>
             <groupId>io.kotest</groupId>
@@ -60,8 +62,8 @@
     </dependencies>
 
     <build>
-        <sourceDirectory>src/main/kotlin</sourceDirectory>
-        <testSourceDirectory>src/test/kotlin</testSourceDirectory>
+        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
@@ -87,14 +89,15 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
+                <version>3.5.2</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
                 <configuration>
-                    <source>17</source>
-                    <target>17</target>
+                    <source>${kotlin.compiler.jvmTarget}</source>
+                    <target>${kotlin.compiler.jvmTarget}</target>
                 </configuration>
             </plugin>
         </plugins>

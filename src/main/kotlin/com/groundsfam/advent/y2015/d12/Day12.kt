@@ -1,6 +1,7 @@
 package com.groundsfam.advent.y2015.d12
 
 import com.groundsfam.advent.DATAPATH
+import com.groundsfam.advent.timed
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
@@ -8,7 +9,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.intOrNull
 import kotlin.io.path.div
-import kotlin.io.path.useLines
+import kotlin.io.path.readText
 
 fun sumNums(jsonString: String): Int {
     var sum = 0
@@ -42,10 +43,8 @@ fun sumNums(jsonElement: JsonElement, ignoreValue: String? = null): Int = when (
 }
 
 
-fun main() {
-    val jsonString = (DATAPATH / "2015/day12.txt").useLines { lines ->
-        lines.first()
-    }
+fun main() = timed {
+    val jsonString = (DATAPATH / "2015/day12.txt").readText()
     println("Part one, seeking integer substrings: ${sumNums(jsonString)}")
     val jsonElement = Json.parseToJsonElement(jsonString)
     println("Part one, parsing json: ${sumNums(jsonElement)}")
