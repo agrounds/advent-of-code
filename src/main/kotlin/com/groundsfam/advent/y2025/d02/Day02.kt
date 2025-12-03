@@ -48,25 +48,30 @@ fun partOne(range: LongRange): Long =
 
 
 fun partTwo(range: LongRange): Long =
-    numDigitsInRange(range).sumOf { nd ->
-        // proper divisors of the number of digits of an invalid ID
-        val divs = divisors(nd).filter { it < nd }.iterator()
-        // gcd of all divisors seen so far
-        var currGcd: Int? = null
-        var sum = 0L
-        while ((currGcd ?: 0) < nd && divs.hasNext()) {
-            val d = divs.next()
-            sum += sumInvalidIDs(range, nd, d)
-            if (currGcd == null) {
-                currGcd = d
-            } else {
-                currGcd = gcd(d, currGcd)
-                // subtract portion of sum that we already got from previous divisors
-                sum -= sumInvalidIDs(range, nd, currGcd)
+    numDigitsInRange(range)
+        .filter { it > 1 }  // can't have repeated digits if we only have one!
+        .sumOf { nd ->
+            // proper divisors of the number of digits of an invalid ID
+            val divs = divisors(nd).filter { it < nd }.iterator()
+            // gcd of all divisors seen so far
+            var currGcd: Int? = null
+            var sum = 0L
+            while (currGcd != 1) {
+                val d = divs.next()
+                val nextGcd = gcd(d, currGcd ?: nd)
+                // only sum invalid IDs if this divisor adds something new
+                // otherwise, we'll end up adding and subtracting the same
+                // thing from the sum
+                if (currGcd != nextGcd) {
+                    sum += sumInvalidIDs(range, nd, d)
+                    if (currGcd != null) {
+                        sum -= sumInvalidIDs(range, nd, nextGcd)
+                    }
+                }
+                currGcd = nextGcd
             }
+            sum
         }
-        sum
-    }
 
 
 fun main() = timed {
