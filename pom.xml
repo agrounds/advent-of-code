@@ -22,7 +22,7 @@
 
         <!-- dependency versions -->
         <kotlinx-serialization.version>1.7.3</kotlinx-serialization.version>
-        <apache-commons.version>3.17.0</apache-commons.version>
+        <apache-commons.version>3.20.0</apache-commons.version>
         <kotest.version>5.9.1</kotest.version>
     </properties>
 
