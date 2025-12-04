@@ -32,11 +32,28 @@ inline fun <T, R> Grid<T>.mapIndexed(transform: (Point, T) -> R): Grid<R> = Grid
     }
 )
 
+inline fun <T, R, C : MutableCollection<in R>> Grid<T>.mapIndexedNotNullTo(
+    destination: C,
+    transform: (p: Point, T) -> R?
+): C {
+    this.forEachIndexed { p, x ->
+        transform(p, x)?.also {
+            destination.add(it)
+        }
+    }
+    return destination
+}
+
 inline fun <T> Grid<T>.forEachIndexed(action: (p: Point, T) -> Unit) {
     this.pointIndices.forEach { p ->
         action(p, this[p])
     }
 }
+
+inline fun <T> Grid<T>.countIndexed(predicate: (p: Point, T) -> Boolean): Int =
+    this.pointIndices.count { p ->
+        predicate(p, this[p])
+    }
 
 fun <T> Grid<T>.count(predicate: (T) -> Boolean): Int =
     this.sumOf { row ->
