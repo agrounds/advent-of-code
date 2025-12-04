@@ -3,26 +3,32 @@ package com.groundsfam.advent.y2025.d04
 import com.groundsfam.advent.DATAPATH
 import com.groundsfam.advent.grids.*
 import com.groundsfam.advent.points.adjacents
+import com.groundsfam.advent.points.Point
 import com.groundsfam.advent.timed
 import kotlin.io.path.div
 
 
 fun removeRolls(grid: Grid<Char>): Pair<Int, Int> {
     val removals = mutableListOf<Int>()
-    do {
-        val rollsToRemove = grid.mapIndexedNotNullTo(mutableSetOf()) { p, c ->
-            val adjacentRolls = p.adjacents(diagonal = true).count {
-                grid.maybeGet(it) == '@'
+    var prevRemovedRolls: Set<Point>? = null
+    while (prevRemovedRolls?.isEmpty() != true) {
+        val rollsToConsider =
+            prevRemovedRolls
+                ?.flatMapTo(mutableSetOf()) { it.adjacents() }
+                ?: grid.pointIndices.toSet()
+        val rollsToRemove = rollsToConsider
+            .filterTo(mutableSetOf()) { p ->
+                val adjacentRolls = p.adjacents().count {
+                    grid.maybeGet(it) == '@'
+                }
+                grid.maybeGet(p) == '@' && adjacentRolls < 4
             }
-            p.takeIf {
-                c == '@' && adjacentRolls < 4
-            }
-        }
         removals.add(rollsToRemove.size)
         rollsToRemove.forEach {
             grid[it] = '.'
         }
-    } while (removals.last() > 0)
+        prevRemovedRolls = rollsToRemove
+    }
     return removals.first() to removals.sum()
 }
 
