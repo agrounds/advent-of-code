@@ -8,17 +8,13 @@ import kotlin.io.path.div
 import kotlin.io.path.useLines
 
 
-fun isFresh(freshRanges: Set<LongRange>, ingredientID: Long): Boolean =
-    freshRanges.any { ingredientID in it }
-
-
 fun unionRanges(ranges: List<LongRange>): List<LongRange> {
     val sorted = ranges.sortedBy { it.first }
     val ret = mutableListOf<LongRange>()
     sorted.forEach { range ->
-        val union =
-            if (ret.isEmpty()) null
-            else range.rangeUnion(ret.last())
+        val union = ret.lastOrNull()?.let {
+            range.rangeUnion(it)
+        }
         if (union != null) {
             ret[ret.size - 1] = union
         } else {
