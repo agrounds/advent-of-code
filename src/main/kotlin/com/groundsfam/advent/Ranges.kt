@@ -1,29 +1,28 @@
 package com.groundsfam.advent
 
 
+fun IntRange.rangeIntersect(that: IntRange): IntRange? =
+    if (this.first <= that.last && that.first <= this.last) {
+        max(this.first, that.first)..min(this.last, that.last)
+    } else {
+        null
+    }
 
-fun IntRange.rangeIntersect(that: IntRange): IntRange? = when {
-    this.first in that -> this.first..min(this.last, that.last)
-    this.last in that -> max(this.first, that.first)..this.last
-    this.first < that.first && this.last > that.last -> that
-    else -> null
-}
+fun LongRange.rangeIntersect(that: LongRange): LongRange? =
+    if (this.first <= that.last && that.first <= this.last) {
+        max(this.first, that.first)..min(this.last, that.last)
+    } else {
+        null
+    }
 
-fun LongRange.rangeIntersect(that: LongRange): LongRange? = when {
-    this.first in that -> this.first..min(this.last, that.last)
-    this.last in that -> max(this.first, that.first)..this.last
-    this.first < that.first && this.last > that.last -> that
-    else -> null
-}
-
-// returns null if there's no overlap,
+// returns null if there's no overlap and ranges are not adjacent,
 // i.e. union is not a single range
-fun LongRange.rangeUnion(that: LongRange): LongRange? = when {
-    this.first in that.first..(that.last + 1) -> that.first..max(this.last, that.last)
-    this.last in (that.first - 1)..that.last -> min(this.first, that.first)..that.last
-    this.first < that.first && this.last > that.last -> this
-    else -> null
-}
+fun LongRange.rangeUnion(that: LongRange): LongRange? =
+    if (this.first <= that.last + 1 && that.first <= this.last + 1) {
+        min(this.first, that.first)..max(this.last, that.last)
+    } else {
+        null
+    }
 
 fun LongRange.except(that: LongRange): List<LongRange> = when {
     this.first in that ->
